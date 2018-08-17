@@ -1,0 +1,17 @@
+- content_for :javascript do
+  :javascript
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.initialize({
+        icon: '/assets/app_logo.png'
+      });
+    });
+%h2 Webhooks
+= @webhooks
+- if @webhooks.present?
+  %ul
+    - @webhooks.each do |webhook|
+      %li
+        = webhook
+        \: #{webhook.address}
+- else
+  %p This app has not created any webhooks for this Shop. Add webhooks to your ShopifyApp initializer if you need webhooks
