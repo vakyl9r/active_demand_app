@@ -36,6 +36,7 @@ gem 'redis'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 # Custom gems
+gem 'jquery-rails'
 gem 'shopify_app'
 gem 'responders'
 gem 'haml'

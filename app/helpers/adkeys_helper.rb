@@ -1,0 +1,2 @@
+module AdkeysHelper
+end

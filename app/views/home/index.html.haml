@@ -6,7 +6,6 @@
       });
     });
 %h2 Webhooks
-= @webhooks
 - if @webhooks.present?
   %ul
     - @webhooks.each do |webhook|
@@ -15,3 +14,26 @@
         \: #{webhook.address}
 - else
   %p This app has not created any webhooks for this Shop. Add webhooks to your ShopifyApp initializer if you need webhooks
+
+%h2 Api Key
+= form_with(model: @adkey, local: true) do |form|
+  - if @adkey.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(@adkey.errors.count, "error")
+        prohibited this setting from being saved:
+      %ul
+        - @adkey.errors.full_messages.each do |message|
+          %li= message
+  .form-group.left-intent
+    = form.label :key
+    = form.text_field :key, id: :adkey_key, class: 'form-control two-third'
+    - if @adkey.key?
+      :javascript
+        displayActiveDEMANDList("#{@adkey.key}")
+  .actions
+    = form.submit 'Save Api Key', id: 'api_key_save'
+#active-demand-forms-container
+  %h3= 'Forms'
+#active-demand-blocks-container
+  %h3= 'Blocks'

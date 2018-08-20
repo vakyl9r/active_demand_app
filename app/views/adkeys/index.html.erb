@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Adkeys</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Shop</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @adkeys.each do |adkey| %>
+      <tr>
+        <td><%= adkey.key %></td>
+        <td><%= adkey.shop %></td>
+        <td><%= link_to 'Show', adkey %></td>
+        <td><%= link_to 'Edit', edit_adkey_path(adkey) %></td>
+        <td><%= link_to 'Destroy', adkey, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Adkey', new_adkey_path %>

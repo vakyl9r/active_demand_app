@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Key:</strong>
+  <%= @adkey.key %>
+</p>
+
+<p>
+  <strong>Shop:</strong>
+  <%= @adkey.shop %>
+</p>
+
+<%= link_to 'Edit', edit_adkey_path(@adkey) %> |
+<%= link_to 'Back', adkeys_path %>
