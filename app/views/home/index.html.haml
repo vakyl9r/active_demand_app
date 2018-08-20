@@ -25,15 +25,15 @@
       %ul
         - @adkey.errors.full_messages.each do |message|
           %li= message
-  .form-group.left-intent
+  #vue_adkey.form-group.left-intent
     = form.label :key
-    = form.text_field :key, id: :adkey_key, class: 'form-control two-third'
-    - if @adkey.key?
-      :javascript
-        displayActiveDEMANDList("#{@adkey.key}")
+    = form.text_field :key, id: :adkey_key, class: 'form-control two-third', 'v-on:change':'verify_key', 'v-model':'key'
   .actions
     = form.submit 'Save Api Key', id: 'api_key_save'
-#active-demand-forms-container
-  %h3= 'Forms'
-#active-demand-blocks-container
-  %h3= 'Blocks'
+%h3 Forms
+#vue_forms
+%h3 Blocks
+#vue_blocks
+- if @adkey.key?
+  :javascript
+    vue_test_function("#{@adkey.key}")

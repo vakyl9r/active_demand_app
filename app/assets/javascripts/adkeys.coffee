@@ -1,61 +1,71 @@
 # Place all the behaviors and hooks related to the matching controller here.
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
-@displayActiveDEMANDList = (key) ->
+@update_forms_and_blocks = (data) ->
+  $('#vue_forms').html('').append("<ul><li class='form-list-item' v-bind:id='form.id' v-for='form in forms'>{{ form }}</li></ul>")
+  $('#vue_blocks').html('').append("<ul><li v-for='block in blocks'>{{ block }}</li></ul>")
+  forms = JSON.parse(data.data_forms)
+  blocks = JSON.parse(data.data_blocks)
+  vue_forms = new Vue({
+    el:'#vue_forms',
+    data:{
+      forms: forms
+    }
+  })
+  $('.form-list-item').each ->
+    form_list_item = $(this)
+    id = form_list_item[0].id
+    $.ajax
+      type: 'POST'
+      url: '/get_fields'
+      data: { key: data.key, form_id: id }
+      dataType: "json"
+      success: (data) ->
+        field_list = JSON.parse(data.body)
+        form_list_item.append("<ul id='vue_fields_#{id}'><li v-for='field in fields'>{{ field }}</li></ul>")
+        vue_fields = new Vue({
+            el: "#vue_fields_#{id}",
+            data:{
+              fields: field_list
+            }
+        })
+      error: (data) ->
+        ShopifyApp.flashError('Bad fields!')
+  vue_blocks = new Vue({
+    el:'#vue_blocks',
+    data:{
+      blocks: blocks
+    }
+  })
+@vue_test_function = (key) ->
+  vue_adkey = new Vue({
+    el: '#vue_adkey',
+    data:{
+      key: key
+    },
+    methods:{
+      verify_key: ->
+        key = this.key
+        $.ajax
+          type: 'POST'
+          url: '/active_demand_api_key_verification'
+          data: { key: key }
+          dataType: "json"
+          success: (data) ->
+            ShopifyApp.flashNotice('API key verified')
+            update_forms_and_blocks(data)
+          error: (data) ->
+            ShopifyApp.flashError('Wrong API key')
+            $('#vue_forms').html('')
+            $('#vue_blocks').html('')
+    }
+  })
   $.ajax
     type: 'POST'
     url: '/active_demand_api_key_verification'
     data: { key: key }
     dataType: "json"
     success: (data) ->
-      forms = JSON.parse(data.data_forms)
-      blocks = JSON.parse(data.data_blocks)
-      $('#active-demand-forms-container').append("
-        <ul class='list form-list'>
-        </ul>
-      ")
-      $.each forms, (i) ->
-        $('.form-list').append("
-          <li id='form-#{i}'>#{forms[i].id} - #{forms[i].name} - [activedemand_form id='#{forms[i].id}']</li>
-        ")
-        $.ajax
-          type: 'POST'
-          url: '/get_fields'
-          data: { key: key, form_id: forms[i].id }
-          dataType: "json"
-          success: (data) ->
-            response = JSON.parse(data.body)
-            $("#form-#{i}").append("
-              <ul id='form-fields-#{i}'>
-              </ul>
-            ")
-            $.each response, (x) ->
-              $("#form-fields-#{i}").append("
-                <li>#{response[x].key} - #{response[x].label}</li>
-              ")
-          error: (data) ->
-            ShopifyApp.flashError('Bad fields!')
-      $('#active-demand-blocks-container').append("
-        <ul class='list block-list'>
-        </ul>
-      ")
-      $.each blocks, (i) ->
-        $('.block-list').append("
-          <li id='block-#{i}'>#{blocks[i].id} - #{blocks[i].name} - [activedemand_block id='#{blocks[i].id}']</li>
-        ")
+      update_forms_and_blocks(data)
     error: (data) ->
-      ShopifyApp.flashError('Something wrong with your API key')
-
-$ ->
-  $('#adkey_key').on 'change', ->
-    api_key = $(this).val()
-    $.ajax
-      type: 'POST'
-      url: '/active_demand_api_key_verification'
-      data: { key: api_key}
-      dataType: "json"
-      success: (data) ->
-        response = JSON.parse(data.data)
-        alert(response[0].name)
-      error: (data) ->
-        ShopifyApp.flashError('Something wrong with your API key')
+      ShopifyApp.flashError('Wrong API key')

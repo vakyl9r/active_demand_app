@@ -43,7 +43,7 @@ class AdkeysController < ApplicationController
     res = Net::HTTP.get_response(uri)
     res2 = Net::HTTP.get_response(uri2)
     if res.is_a?(Net::HTTPSuccess)
-      render json: { data_forms: res.body, data_blocks: res2.body }
+      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key] }
     else
       render json: { errors: res.body }, status: 409
     end
