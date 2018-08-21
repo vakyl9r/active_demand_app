@@ -53,6 +53,7 @@
       dataType: "json"
       success: (data) ->
         field_list = JSON.parse(data.body)
+        webhook_list = data.webhook_columns
         $('#field-mapping-modal').html('').append("
           <span class='close-modal'></span>
           <table id='vue_fields_#{id}'>
@@ -62,17 +63,39 @@
             </tr>
             <tr v-for='field in fields'>
               <td>{{ field.label }}</td>
-              <td>This will be Shopify Selector</td>
+              <td>
+                <select class='webhook-select' v-bind:data-select-for='field.label'>
+                  <option selected disabled>Choose webhook field</option>
+                  <option v-for='webhook in webhooks'>{{ webhook }}</option>
+                </select>
+              </td>
             </tr>
           </table>
+          <span class='save-map'>Save</span>
         ")
         $('.app-fill').fadeIn()
         vue_fields = new Vue({
             el: "#vue_fields_#{id}",
             data:{
               fields: field_list
+              webhooks: webhook_list
             }
         })
+        $('#field-mapping-modal').on "click", ".save-map", ->
+          webhook_array = []
+          $('.webhook-select').each ->
+            webhook_key = $(this).val()
+            webhook_value = $(this).data('select-for')
+            webhook_array.push({active_demand: webhook_value, shopify: webhook_key})
+          $.ajax
+            type: 'POST'
+            url: '/save_adfields'
+            data: { webhook_array: webhook_array }
+            dataType: "json"
+            success: (data) ->
+              alert('Cool!')
+            error: (data) ->
+              alert('Not cool :()')
       error: (data) ->
         ShopifyApp.flashError('Bad fields!')
   $('#field-mapping-modal').on "click", ".close-modal", ->

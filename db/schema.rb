@@ -10,10 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_20_060952) do
+ActiveRecord::Schema.define(version: 2018_08_21_170616) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_demand_webhooks", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.string "topic"
+    t.string "email"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "full_name"
+    t.string "phone"
+    t.string "country"
+    t.string "province"
+    t.string "city"
+    t.string "address_1"
+    t.string "address_2"
+    t.string "zip"
+    t.string "company"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_active_demand_webhooks_on_shop_id"
+  end
 
   create_table "adkeys", force: :cascade do |t|
     t.string "key"
@@ -31,5 +51,13 @@ ActiveRecord::Schema.define(version: 2018_08_20_060952) do
     t.index ["shopify_domain"], name: "index_shops_on_shopify_domain", unique: true
   end
 
+  create_table "webhook_names", force: :cascade do |t|
+    t.string "name"
+    t.string "topic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "active_demand_webhooks", "shops"
   add_foreign_key "adkeys", "shops"
 end

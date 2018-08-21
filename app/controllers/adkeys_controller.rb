@@ -50,14 +50,27 @@ class AdkeysController < ApplicationController
   end
 
   def get_fields
+    @column_names = ActiveDemandWebhook.column_names[3..-3]
+    @webhook_columns = []
+    @column_names.each do |column_name|
+      @webhook_columns.push column_name.humanize
+    end
     uri = URI('https://api.activedemand.com/v1/forms/fields.json')
     parameters = { form_id: params[:form_id], 'api-key': params[:key]}
     uri.query = URI.encode_www_form(parameters )
     res = Net::HTTP.get_response(uri)
     if res.is_a?(Net::HTTPSuccess)
-      render json: { body: res.body }
+      render json: { body: res.body, webhook_columns: @webhook_columns}
     else
       render json: { errors: res.body }, status: 409
+    end
+  end
+
+  def save_adfields
+    @webhook_array = params[:webhook_array]
+    @webhook_array.each do |webhook|
+      webhook.last[:shopify].remove(" ").tableize
+      binding.pry
     end
   end
 
