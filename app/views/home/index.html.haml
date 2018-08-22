@@ -14,7 +14,7 @@
         \: #{webhook.address}
 - else
   %p This app has not created any webhooks for this Shop. Add webhooks to your ShopifyApp initializer if you need webhooks
-
+%span#shop-id{'data-shop-id': @shop.id }
 %h2 Api Key
 = form_with(model: @adkey, local: true) do |form|
   - if @adkey.errors.any?

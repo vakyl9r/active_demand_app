@@ -42,18 +42,20 @@ class AdkeysController < ApplicationController
     uri2.query = URI.encode_www_form(parameters )
     res = Net::HTTP.get_response(uri)
     res2 = Net::HTTP.get_response(uri2)
+    @shopify_webhooks = WebhookName.all
     if res.is_a?(Net::HTTPSuccess)
-      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key] }
+      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key], data_webhooks: @shopify_webhooks }
     else
       render json: { errors: res.body }, status: 409
     end
   end
 
   def get_fields
-    @column_names = ActiveDemandWebhook.column_names[3..-3]
+    webhook_topic = params[:webhook_topic]
+    @webhook = WebhookName.find_by(topic: webhook_topic)
     @webhook_columns = []
-    @column_names.each do |column_name|
-      @webhook_columns.push column_name.humanize
+    @webhook.fields.each do |column_name|
+      @webhook_columns.push column_name.titleize
     end
     uri = URI('https://api.activedemand.com/v1/forms/fields.json')
     parameters = { form_id: params[:form_id], 'api-key': params[:key]}
@@ -67,11 +69,23 @@ class AdkeysController < ApplicationController
   end
 
   def save_adfields
-    @webhook_array = params[:webhook_array]
-    @webhook_array.each do |webhook|
-      webhook.last[:shopify].remove(" ").tableize
-      binding.pry
+    activedemand_array = params[:activedemand_array]
+    shopify_array = params[:shopify_array]
+    webhook_topic = params[:webhook_topic]
+    id = params[:id]
+    @adw_params = []
+    shopify_array.each_with_index do |webhook, index|
+      if !webhook.blank?
+        table_column = webhook.remove(' ').tableize.singularize
+        @adw_params.push "#{activedemand_array[index]}": table_column
+      end
     end
+    @activedemandwebhook = ActiveDemandWebhook.find_by(id: id)
+    if @activedemandwebhook
+      @activedemandwebhook.update(topic: webhook_topic, fields: @adw_params)
+    end
+    #ActiveDemandWebhook.create(shop_id: shop_id, topic: webhook_topic, fields: @adw_params)
+    render json: { body: @adw_params }
   end
 
   private

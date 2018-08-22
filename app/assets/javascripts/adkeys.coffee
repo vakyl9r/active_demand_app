@@ -7,11 +7,18 @@
       <tr>
         <th>Form Name</th>
         <th>Code</th>
+        <th>Webhook</th>
         <th>Field Mapping</th>
       </tr>
       <tr class='form-list-item' v-bind:id='form.id' v-for='form in forms'>
         <td>{{ form.name }}</td>
         <td>{{ form.id }}</td>
+        <td>
+          <select class='webhook-name-select'>
+            <option selected disabled>Choose webhook</option>
+            <option v-for='webhook in webhooks' v-bind:data-webhook-topic='webhook.topic'>{{ webhook.name }}</option>
+          </select>
+        </td>
         <td><span class='field-mapping' v-bind:data-form-id='form.id'></span></td>
       </tr>
     </table>
@@ -31,10 +38,12 @@
   ")
   forms = JSON.parse(data.data_forms)
   blocks = JSON.parse(data.data_blocks)
+  webhooks = data.data_webhooks
   vue_forms = new Vue({
     el:'#vue_forms',
     data:{
-      forms: forms
+      forms: forms,
+      webhooks: webhooks
     }
   })
   vue_blocks = new Vue({
@@ -45,11 +54,12 @@
   })
   $('#vue_forms').on "click", ".field-mapping", ->
     id = $(this).data('form-id')
+    webhook_topic = $(this).closest('.form-list-item').find('.webhook-name-select option:selected').data('webhook-topic')
     key = $('#api-key').data('api-key')
     $.ajax
       type: 'POST'
       url: '/get_fields'
-      data: { form_id: id, key: key }
+      data: { form_id: id, key: key, webhook_topic: webhook_topic }
       dataType: "json"
       success: (data) ->
         field_list = JSON.parse(data.body)
@@ -64,14 +74,14 @@
             <tr v-for='field in fields'>
               <td>{{ field.label }}</td>
               <td>
-                <select class='webhook-select' v-bind:data-select-for='field.label'>
+                <select class='webhook-select' v-bind:data-select-for='field.key'>
                   <option selected disabled>Choose webhook field</option>
                   <option v-for='webhook in webhooks'>{{ webhook }}</option>
                 </select>
               </td>
             </tr>
           </table>
-          <span class='save-map'>Save</span>
+          <span class='save-map' data-webhook-topic='#{webhook_topic}'>Save</span>
         ")
         $('.app-fill').fadeIn()
         vue_fields = new Vue({
@@ -82,20 +92,25 @@
             }
         })
         $('#field-mapping-modal').on "click", ".save-map", ->
-          webhook_array = []
+          activedemand_array = []
+          shopify_array = []
+          webhook_topic = $(this).data('webhook-topic')
+          id = 2
           $('.webhook-select').each ->
-            webhook_key = $(this).val()
-            webhook_value = $(this).data('select-for')
-            webhook_array.push({active_demand: webhook_value, shopify: webhook_key})
+            shopify_value = $(this).val()
+            activedemand_value = $(this).data('select-for')
+            activedemand_array.push(activedemand_value)
+            shopify_array.push(shopify_value)
           $.ajax
             type: 'POST'
             url: '/save_adfields'
-            data: { webhook_array: webhook_array }
+            data: { activedemand_array: activedemand_array, shopify_array: shopify_array, id: id, webhook_topic: webhook_topic }
             dataType: "json"
             success: (data) ->
+              debugger
               alert('Cool!')
             error: (data) ->
-              alert('Not cool :()')
+              alert('Not cool :(')
       error: (data) ->
         ShopifyApp.flashError('Bad fields!')
   $('#field-mapping-modal').on "click", ".close-modal", ->
