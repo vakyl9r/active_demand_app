@@ -34,6 +34,16 @@
 #vue_forms
 %h3 Blocks
 #vue_blocks
-- if @adkey.key?
+- if @shop.adkey.key?
   :javascript
-    vue_test_function("#{@adkey.key}")
+    vue_test_function("#{@shop.adkey.key}")
+
+%hr
+
+%h2 Triggers
+%button.create-new-webhook NEW
+%table#triggers
+  %tbody
+- if @shop.active_demand_webhooks.exists?
+  :javascript
+    all_ad_webhooks("#{@shop.id}")
