@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_22_123025) do
+ActiveRecord::Schema.define(version: 2018_08_23_090102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,8 +20,8 @@ ActiveRecord::Schema.define(version: 2018_08_22_123025) do
     t.string "topic"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "fields", default: [], array: true
     t.string "form_id"
+    t.jsonb "fields", default: [], array: true
     t.index ["shop_id"], name: "index_active_demand_webhooks_on_shop_id"
   end
 

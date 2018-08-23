@@ -43,12 +43,10 @@ class ActiveDemandWebhooksController < ApplicationController
     @adw_params = []
     shopify_array.each_with_index do |webhook, index|
       if !webhook.blank?
-        webhook_field = webhook.remove(' ').tableize.singularize
-        @adw_params.push "#{activedemand_array[index]}": webhook_field
+        @adw_params.push ad: activedemand_array[index], webhook: webhook
       end
     end
-    if @active_demand_webhook.update(topic: webhook_topic, fields: @adw_params,
-    form_id: form_id)
+    if @active_demand_webhook.update(topic: webhook_topic, fields: @adw_params, form_id: form_id)
       render json: { webhook: @active_demand_webhook}
     else
       render json: @active_demand_webhook.errors
