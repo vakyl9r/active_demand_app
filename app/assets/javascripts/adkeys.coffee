@@ -2,7 +2,13 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 @update_forms_and_blocks = (data) ->
-  $('#vue_forms').html('').append("
+  forms = JSON.parse(data.data_forms)
+  blocks = JSON.parse(data.data_blocks)
+  vue_forms.forms = forms
+  vue_blocks.blocks = blocks
+
+@vue_init_function = (data) ->
+  $('#vue_forms').append("
     <table>
       <tr>
         <th>Form Name</th>
@@ -15,7 +21,7 @@
     </table>
     <span id='api-key' data-api-key='#{data.key}'></span>
   ")
-  $('#vue_blocks').html('').append("
+  $('#vue_blocks').append("
     <table>
       <tr>
         <th>Block Name</th>
@@ -29,15 +35,13 @@
   ")
   forms = JSON.parse(data.data_forms)
   blocks = JSON.parse(data.data_blocks)
-  webhooks = data.data_webhooks
-  vue_forms = new Vue({
+  window.vue_forms = new Vue({
     el:'#vue_forms',
     data:{
-      forms: forms,
-      webhooks: webhooks
+      forms: forms
     }
   })
-  vue_blocks = new Vue({
+  window.vue_blocks = new Vue({
     el:'#vue_blocks',
     data:{
       blocks: blocks
@@ -63,8 +67,8 @@
             update_forms_and_blocks(data)
           error: (data) ->
             ShopifyApp.flashError('Wrong API key')
-            $('#vue_forms').html('')
-            $('#vue_blocks').html('')
+            vue_forms.forms = []
+            vue_blocks.blocks = []
     }
   })
   $.ajax
@@ -73,6 +77,6 @@
     data: { key: key }
     dataType: "json"
     success: (data) ->
-      update_forms_and_blocks(data)
+      vue_init_function(data)
     error: (data) ->
       ShopifyApp.flashError('Wrong API key')

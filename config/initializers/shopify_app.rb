@@ -12,7 +12,9 @@ ShopifyApp.configure do |config|
   config.webhooks = [
     {topic: 'carts/update', address: "#{ENV['SITE_LINK']}/webhooks/carts_update", format: 'json'},
     {topic: 'orders/create', address: "#{ENV['SITE_LINK']}/webhooks/orders_create", format: 'json'},
-    {topic: 'customers/create', address: "#{ENV['SITE_LINK']}/webhooks/customers_create", format: 'json'},
     {topic: 'orders/paid', address: "#{ENV['SITE_LINK']}/webhooks/orders_paid", format: 'json'},
+    {topic: 'orders/cancelled', address: "#{ENV['SITE_LINK']}/webhooks/orders_cancelled", format: 'json'},
+    {topic: 'orders/updated', address: "#{ENV['SITE_LINK']}/webhooks/orders_updated", format: 'json'},
+    {topic: 'customers/create', address: "#{ENV['SITE_LINK']}/webhooks/customers_create", format: 'json'},
   ]
 end

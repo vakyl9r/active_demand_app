@@ -52,7 +52,7 @@
           success: (data) ->
             $("[data-webhook='#{id}']").remove()
           error: (data) ->
-            alert('Not cool :(')
+            ShopifyApp.flashError('Something went wrong. Please, try again later')
       $('#triggers').on "click", ".field-mapping", ->
         webhook_topic = $(this).closest('tr').find('.webhook-select option:selected').data('webhook-topic')
         if webhook_topic != undefined
@@ -171,6 +171,6 @@ $ ->
             webhooks: webhooks
           }
         })
-        alert('Cool!')
+        ShopifyApp.flashNotice('New trigger created successfully')
       error: (data) ->
-        alert('Not cool :(')
+        ShopifyApp.flashError('Something went wrong. Please, try again later')
