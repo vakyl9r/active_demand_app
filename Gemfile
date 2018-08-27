@@ -52,6 +52,11 @@ end
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'web-console', '>= 3.3.0'
+  gem 'capistrano'
+  gem 'capistrano3-puma'
+  gem 'capistrano-rails' #Should already be in your Gemfile
+  gem 'capistrano-bundler'
+  gem 'capistrano-rvm'
 end
 
 group :test do

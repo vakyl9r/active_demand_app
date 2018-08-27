@@ -15,6 +15,8 @@ ShopifyApp.configure do |config|
     {topic: 'orders/paid', address: "#{ENV['SITE_LINK']}/webhooks/orders_paid", format: 'json'},
     {topic: 'orders/cancelled', address: "#{ENV['SITE_LINK']}/webhooks/orders_cancelled", format: 'json'},
     {topic: 'orders/updated', address: "#{ENV['SITE_LINK']}/webhooks/orders_updated", format: 'json'},
+    {topic: 'checkouts/create', address: "#{ENV['SITE_LINK']}/webhooks/checkouts_create", format: 'json'},
+    {topic: 'checkouts/update', address: "#{ENV['SITE_LINK']}/webhooks/checkouts_update", format: 'json'},
     {topic: 'customers/create', address: "#{ENV['SITE_LINK']}/webhooks/customers_create", format: 'json'},
   ]
 end
