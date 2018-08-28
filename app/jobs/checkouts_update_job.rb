@@ -20,7 +20,6 @@ class CheckoutsUpdateJob < ActiveJob::Base
                 form_params[:"#{field['ad']}"] = webhook[:shipping_address][:"#{field['webhook']}"]
               end
             end
-            binding.pry
             res = Net::HTTP.post_form(uri, form_params)
           end
         end
