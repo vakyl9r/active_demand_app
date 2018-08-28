@@ -32,7 +32,7 @@
             </select>
           </td>
           <td><span class='field-mapping' v-bind:data-webhook-id='ad_webhook.id'></span></td>
-          <td><button class='delete-webhook' v-bind:data-webhook-id='ad_webhook.id'>DELETE</button></td>
+          <td><span class='delete-webhook' v-bind:data-webhook-id='ad_webhook.id'></span></td>
         </tr>
       ")
       vue_all_ad_webhooks = new Vue({
