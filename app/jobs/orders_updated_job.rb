@@ -1,9 +1,9 @@
-class OrdersPaidJob < ActiveJob::Base
+class OrdersUpdatedJob < ActiveJob::Base
   require 'net/http'
 
   def perform(shop_domain:, webhook:)
     shop = Shop.find_by(shopify_domain: shop_domain)
-    webhook_topic = 'orders/paid'
+    webhook_topic = 'orders/updated'
     shop.with_shopify_session do
       forms = ActiveDemandWebhook.where(shop_id: shop.id, topic: webhook_topic)
       if forms
