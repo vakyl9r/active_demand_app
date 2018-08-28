@@ -4,12 +4,12 @@ lock "~> 3.11.0"
 set :application, "active_demand_app"
 set :repo_url, "git@github.com:AlexSukov/active_demand_app.git"
 set :branch, :master
-set :deploy_to, '/home/deploy/active_demand_app'
+set :deploy_to, '/home/ec2-user/active_demand_app'
 set :pty, true
 set :linked_files, %w{config/database.yml config/secrets.yml}
 set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/uploads}
 set :keep_releases, 5
-set :rvm_type, :user
+set :rvm_type, :auto
 set :rvm_ruby_version, 'ruby-2.4.4' # Should match ruby version
 
 
