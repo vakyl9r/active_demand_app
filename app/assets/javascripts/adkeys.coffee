@@ -13,10 +13,12 @@
       <tr>
         <th>Form Name</th>
         <th>Code</th>
+        <th>Copy</th>
       </tr>
       <tr class='form-list-item' v-bind:id='form.id' v-for='form in forms'>
         <td>{{ form.name }}</td>
         <td>{{ form.id }}</td>
+        <td>Insert copy here!</td>
       </tr>
     </table>
     <span id='api-key' data-api-key='#{data.key}'></span>
@@ -26,10 +28,12 @@
       <tr>
         <th>Block Name</th>
         <th>Code</th>
+        <th>Copy</th>
       </tr>
       <tr v-for='block in blocks'>
         <td>{{ block.name }}</td>
         <td>{{ block.id }}</td>
+        <td>Insert copy here!</td>
       </tr>
     </table>
   ")

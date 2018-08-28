@@ -1,5 +1,5 @@
 body {
-  background-color: #fff;
+  background-color: #eaedf1;
   color: #333;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
@@ -91,6 +91,15 @@ label {
   margin: 0 auto;
   cursor: pointer;
 }
+.delete-webhook{
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: url('garbage.png') no-repeat;
+  background-size: contain;
+  margin: 0 auto;
+  cursor: pointer;
+}
 .app-fill{
   width: 100%;
   height: 100%;
@@ -116,7 +125,21 @@ label {
     }
   }
 }
-
+#content-container{
+  td, th{
+    border-right: 1px solid #cdcdcd;
+    text-align: left;
+    padding-left: 15px;
+  }
+  tr td:first-of-type{
+    width: 30%;
+  }
+  tr td:last-of-type{
+    width: 15%;
+    text-align: center;
+    padding-left: 0;
+  }
+}
 .close-modal{
   display: block;
   width: 20px;
@@ -125,4 +148,40 @@ label {
   background-size: contain;
   cursor: pointer;
   float: right;
+}
+.container{
+  max-width: 1180px;
+  margin: 0 auto;
+  table{
+    border-collapse: collapse;
+    width: 100%;
+    select{
+      padding: 5px;
+      width: 70%;
+    }
+  }
+  th{
+    background-color: #ebebeb;
+    padding: 10px;
+  }
+  tr{
+    border: 1px solid #cdcdcd;
+    background-color: white;
+  }
+  td{
+    text-align: center;
+    padding: 10px;
+  }
+}
+.flex-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.create-new-webhook{
+  background-color: #2b3643;
+  padding: 5px 15px;
+  color: white;
+  font-weight: bold;
+  border: 2px solid #ccc;
 }

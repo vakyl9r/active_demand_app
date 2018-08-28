@@ -30,21 +30,26 @@
     = form.text_field :key, id: :adkey_key, class: 'form-control two-third', 'v-on:change':'verify_key', 'v-model':'key'
   .actions
     = form.submit 'Save Api Key', id: 'api_key_save'
-%h3 Forms
-#vue_forms
+%hr
 
-%h3 Blocks
-#vue_blocks
-- if @shop.adkey.key?
-  :javascript
-    vue_test_function("#{@shop.adkey.key}")
+.container#content-container
+  %h2 Current Forms
+  #vue_forms
+
+  %h2 Current Dynamic Blocks
+  #vue_blocks
+  - if @shop.adkey.key?
+    :javascript
+      vue_test_function("#{@shop.adkey.key}")
 
 %hr
 
-%h2 Triggers
-%button.create-new-webhook NEW
-%table#triggers
-  %tbody
-- if @shop.active_demand_webhooks.exists?
-  :javascript
-    all_ad_webhooks("#{@shop.id}")
+.container#triggers-container
+  .flex-row
+    %h2 Triggers
+    %button.create-new-webhook NEW
+  %table#triggers
+    %tbody
+  - if @shop.active_demand_webhooks.exists?
+    :javascript
+      all_ad_webhooks("#{@shop.id}")
