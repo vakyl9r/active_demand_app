@@ -42,5 +42,15 @@ WebhookName.create([
     name: 'Delete Checkout',
     topic: 'checkouts/delete',
     fields: ['email', 'first_name', 'last_name', 'name', 'phone', 'country', 'province', 'city', 'address1', 'address2', 'zip', 'company']
+  },
+  {
+    name: 'Create Customer',
+    topic: 'customers/create',
+    fields: ['email', 'first_name', 'last_name', 'name', 'phone', 'country', 'province', 'city', 'address1', 'address2', 'zip', 'company', 'note', 'tags']
+  },
+  {
+    name: 'Update Customer',
+    topic: 'customers/update',
+    fields: ['email', 'first_name', 'last_name', 'name', 'phone', 'country', 'province', 'city', 'address1', 'address2', 'zip', 'company', 'note', 'tags']
   }
 ])

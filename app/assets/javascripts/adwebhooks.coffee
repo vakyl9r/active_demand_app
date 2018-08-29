@@ -162,7 +162,7 @@ $ ->
           </select>
         </td>
         <td><span class='field-mapping' data-webhook-id='#{ad_webhook.id}'></span></td>
-        <td><button class='delete-webhook' data-webhook-id='#{ad_webhook.id}'>DELETE</button></td>
+        <td><span class='delete-webhook' data-webhook-id='#{ad_webhook.id}'></span></td>
         </tr>")
         vue_mapping = new Vue({
           el: "[data-webhook='#{ad_webhook.id}']",

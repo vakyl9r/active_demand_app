@@ -10,6 +10,8 @@ ShopifyApp.configure do |config|
     {event:'onload', src: 'https://static.activedemand.com/public/javascript/ad.collect.min.js.jgz'}
   ]
   config.webhooks = [
+    {topic: 'customers/create', address: "#{ENV['SITE_LINK']}/webhooks/customers_create", format: 'json'},
+    {topic: 'customers/update', address: "#{ENV['SITE_LINK']}/webhooks/customers_update", format: 'json'},
     {topic: 'carts/update', address: "#{ENV['SITE_LINK']}/webhooks/carts_update", format: 'json'},
     {topic: 'orders/create', address: "#{ENV['SITE_LINK']}/webhooks/orders_create", format: 'json'},
     {topic: 'orders/paid', address: "#{ENV['SITE_LINK']}/webhooks/orders_paid", format: 'json'},
@@ -17,6 +19,5 @@ ShopifyApp.configure do |config|
     {topic: 'orders/updated', address: "#{ENV['SITE_LINK']}/webhooks/orders_updated", format: 'json'},
     {topic: 'checkouts/create', address: "#{ENV['SITE_LINK']}/webhooks/checkouts_create", format: 'json'},
     {topic: 'checkouts/update', address: "#{ENV['SITE_LINK']}/webhooks/checkouts_update", format: 'json'},
-    {topic: 'customers/create', address: "#{ENV['SITE_LINK']}/webhooks/customers_create", format: 'json'},
   ]
 end
