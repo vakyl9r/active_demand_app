@@ -9,7 +9,7 @@ class OrdersCreateJob < ActiveJob::Base
       if forms
         parameters = { 'api-key': shop.adkey.key }
         forms.each do |form|
-          uri = URI("https://api.activedemand.com/v1/forms/#{form.id}")
+          uri = URI("https://api.activedemand.com/v1/forms/#{form.form_id}")
           uri.query = URI.encode_www_form(parameters )
           form_params = {}
           form.fields.each do |field|
