@@ -54,7 +54,7 @@ group :development do
   gem 'web-console', '>= 3.3.0'
   gem 'capistrano'
   gem 'capistrano3-puma'
-  gem 'capistrano-rails' #Should already be in your Gemfile
+  gem 'capistrano-rails'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
 end
