@@ -40,7 +40,7 @@
   #vue_blocks
   - if @shop.adkey.key?
     :javascript
-      vue_test_function("#{@shop.adkey.key}")
+      vue_test_function("#{@shop.adkey.key}", "#{@shop.id}")
 
 %hr
 
@@ -53,3 +53,11 @@
   - if @shop.active_demand_webhooks.exists?
     :javascript
       all_ad_webhooks("#{@shop.id}")
+
+%hr
+
+.container#abandoned-cart-container
+  %h2 Abandoned Cart
+  #abandoned-cart
+
+%hr

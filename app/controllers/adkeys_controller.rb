@@ -43,8 +43,9 @@ class AdkeysController < ApplicationController
     res = Net::HTTP.get_response(uri)
     res2 = Net::HTTP.get_response(uri2)
     @shopify_webhooks = WebhookName.all
+    @abandoned_cart = AbandonedCart.find_by(shop_id: params[:shop_id])
     if res.is_a?(Net::HTTPSuccess)
-      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key], data_webhooks: @shopify_webhooks }
+      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key], data_webhooks: @shopify_webhooks, data_abandoned_cart: @abandoned_cart }
     else
       render json: { errors: res.body }, status: 409
     end

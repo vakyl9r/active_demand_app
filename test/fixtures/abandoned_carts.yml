@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shop: one
+  boolean: 
+  jsonb: 
+  string: 
+  integer: 2018-08-31 08:57:12
+
+two:
+  shop: two
+  boolean: 
+  jsonb: 
+  string: 
+  integer: 2018-08-31 08:57:12

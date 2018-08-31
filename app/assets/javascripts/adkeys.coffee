@@ -37,6 +37,31 @@
       </tr>
     </table>
   ")
+  $('#abandoned-cart').append("
+    <p>
+      Enable abandoned cart?
+      <input type='checkbox' v-bind:value='abandoned_cart.enable' id='abandoned-cart-enable'>
+    </p
+    <p>On adandoned cart, post to:
+      <select class='form-select'>
+        <option disabled selected>Choose a form</option>
+        <option v-for='form in forms' v-if='form.id == abandoned_cart.form_id' selected v-bind:data-form-id='form.id'>{{form.name}}</option>
+        <option v-else v-bind:data-form-id='form.id'>{{form.name}}</option>
+      </select>
+      <span class='field-mapping'></span>
+    </p>
+    <p>
+      Consider a cart stale if it sits for:
+      <input type='number' min='1' id='abandoned-cart-time'>
+      <select class='time-select'>
+        <option>Minute</option>
+        <option>Hours</option>
+        <option>Weeks</option>
+      </select>
+    </p>
+    <button id='save-abandoned-cart' v-bind:data-abandoned-cart-id='abandoned_cart.id' >Save cart settings</button>
+  ")
+  abandoned_cart = data.data_abandoned_cart
   forms = JSON.parse(data.data_forms)
   blocks = JSON.parse(data.data_blocks)
   window.vue_forms = new Vue({
@@ -51,20 +76,44 @@
       blocks: blocks
     }
   })
+  window.abandoned_cart = new Vue({
+    el:'#abandoned-cart',
+    data:{
+      forms: forms,
+      abandoned_cart: abandoned_cart
+    }
+  })
+  $('#abandoned-cart').on 'click', '#save-abandoned-cart', ->
+    id = $(this).data('abandoned-cart-id')
+    form_id = $('#abandoned-cart .form-select option:selected').data('form-id')
+    time = $('#abandoned-cart-time').val()
+    time_parser = $('.time-select').val()
+    enable = $('#abandoned-cart-enable').val()
+    $.ajax
+      type: 'PATCH'
+      url:  "/abandoned_carts/#{id}"
+      data: { form_id: form_id, time: time, enable: enable }
+      dataType: "json"
+      success: (data) ->
+        alert('AbandonedCart saved')
+      error: (data) ->
+        alert('AbandonedCart save error!')
 
-@vue_test_function = (key) ->
+@vue_test_function = (key, shop_id) ->
   vue_adkey = new Vue({
     el: '#vue_adkey',
     data:{
-      key: key
+      key: key,
+      shop_id: shop_id
     },
     methods:{
       verify_key: ->
         key = this.key
+        shop_id = this.shop_id
         $.ajax
           type: 'POST'
           url: '/active_demand_api_key_verification'
-          data: { key: key }
+          data: { key: key, shop_id: shop_id }
           dataType: "json"
           success: (data) ->
             ShopifyApp.flashNotice('API key verified')
@@ -78,7 +127,7 @@
   $.ajax
     type: 'POST'
     url: '/active_demand_api_key_verification'
-    data: { key: key }
+    data: { key: key, shop_id: shop_id }
     dataType: "json"
     success: (data) ->
       vue_init_function(data)
