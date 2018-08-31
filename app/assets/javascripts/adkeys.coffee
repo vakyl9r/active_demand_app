@@ -40,7 +40,8 @@
   $('#abandoned-cart').append("
     <p>
       Enable abandoned cart?
-      <input type='checkbox' v-bind:value='abandoned_cart.enable' id='abandoned-cart-enable'>
+      <input type='checkbox' v-if='abandoned_cart.enable' checked id='abandoned-cart-enable'>
+      <input type='checkbox' v-else id='abandoned-cart-enable'>
     </p
     <p>On adandoned cart, post to:
       <select class='form-select'>
@@ -52,18 +53,18 @@
     </p>
     <p>
       Consider a cart stale if it sits for:
-      <input type='number' min='1' id='abandoned-cart-time'>
+      <input type='number' min='1' id='abandoned-cart-time' v-bind:value='abandoned_cart.time'>
       <select class='time-select'>
-        <option>Minute</option>
-        <option>Hours</option>
-        <option>Weeks</option>
+        <option v-for='time_parser in time_parsers' v-if='abandoned_cart.time_parser == time_parser' selected >{{ time_parser }}</option>
+        <option v-else>{{ time_parser }}</option>
       </select>
     </p>
-    <button id='save-abandoned-cart' v-bind:data-abandoned-cart-id='abandoned_cart.id' >Save cart settings</button>
+    <button id='save-abandoned-cart' v-bind:data-abandoned-cart-id='abandoned_cart.id'>Save cart settings</button>
   ")
   abandoned_cart = data.data_abandoned_cart
   forms = JSON.parse(data.data_forms)
   blocks = JSON.parse(data.data_blocks)
+
   window.vue_forms = new Vue({
     el:'#vue_forms',
     data:{
@@ -80,7 +81,8 @@
     el:'#abandoned-cart',
     data:{
       forms: forms,
-      abandoned_cart: abandoned_cart
+      abandoned_cart: abandoned_cart,
+      time_parsers: ['Hours', 'Days']
     }
   })
   $('#abandoned-cart').on 'click', '#save-abandoned-cart', ->
@@ -88,16 +90,16 @@
     form_id = $('#abandoned-cart .form-select option:selected').data('form-id')
     time = $('#abandoned-cart-time').val()
     time_parser = $('.time-select').val()
-    enable = $('#abandoned-cart-enable').val()
+    enable = $('#abandoned-cart-enable').prop('checked')
     $.ajax
       type: 'PATCH'
-      url:  "/abandoned_carts/#{id}"
-      data: { form_id: form_id, time: time, enable: enable }
+      url:  "/update_abandoned_cart/#{id}"
+      data: { form_id: form_id, time: time, enable: enable, time_parser: time_parser }
       dataType: "json"
       success: (data) ->
-        alert('AbandonedCart saved')
+        ShopifyApp.flashNotice('Abandoned cart saved successfully.')
       error: (data) ->
-        alert('AbandonedCart save error!')
+        ShopifyApp.flashError('Something wrong with your abandoned cart. Please try again later.')
 
 @vue_test_function = (key, shop_id) ->
   vue_adkey = new Vue({

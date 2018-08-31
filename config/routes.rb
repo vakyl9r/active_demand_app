@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   post 'get_fields', to: 'adkeys#get_fields'
   post 'save_adfields', to: 'adkeys#save_adfields'
   post 'all_ad_webhooks', to: 'active_demand_webhooks#all_ad_webhooks'
-  resources :abandoned_carts, only: :update
+  patch 'update_abandoned_cart/:id', to: 'adkeys#update_abandoned_cart'
   post '/abandoned_carts/create_checkout', to: 'abandoned_carts#create_checkout'
 
   root to: 'home#index'

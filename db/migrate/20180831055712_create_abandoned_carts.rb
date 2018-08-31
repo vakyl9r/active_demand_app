@@ -6,7 +6,8 @@ class CreateAbandonedCarts < ActiveRecord::Migration[5.2]
       t.text :fields, array: true, default: ['email', 'first_name', 'last_name', 'name', 'phone', 'country', 'province', 'city', 'address1', 'address2', 'zip', 'company']
       t.jsonb :ad_fields, array: true, default: []
       t.string :form_id
-      t.integer :time
+      t.integer :time, default: 1
+      t.string  :time_parser, default: 'Hours'
 
       t.timestamps
     end

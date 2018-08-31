@@ -1,7 +1,20 @@
 class AdkeysController < ApplicationController
   before_action :set_adkey, only: [:show, :edit, :update, :destroy]
+  before_action :set_abandoned_cart, only: [:update_abandoned_cart]
   respond_to :js, :html, :json
   require 'net/http'
+
+  def update_abandoned_cart
+    enable = params[:enable]
+    time = params[:time]
+    form_id = params[:form_id]
+    time_parser = params[:time_parser]
+    if @abandoned_cart.update(enable: enable, time: time, form_id: form_id, time_parser: time_parser )
+      render json: { abandoned_cart: @abandoned_cart}
+    else
+      render json: @abandoned_cart.errors
+    end
+  end
 
   def create
     @adkey = Adkey.new(adkey_params)
@@ -93,6 +106,10 @@ class AdkeysController < ApplicationController
   private
     def set_adkey
       @adkey = Adkey.find(params[:id])
+    end
+
+    def set_abandoned_cart
+      @abandoned_cart = AbandonedCart.find(params[:id])
     end
 
     def adkey_params

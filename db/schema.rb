@@ -21,7 +21,8 @@ ActiveRecord::Schema.define(version: 2018_08_31_055712) do
     t.text "fields", default: ["email", "first_name", "last_name", "name", "phone", "country", "province", "city", "address1", "address2", "zip", "company"], array: true
     t.jsonb "ad_fields", default: [], array: true
     t.string "form_id"
-    t.integer "time"
+    t.integer "time", default: 1
+    t.string "time_parser", default: "Hours"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["shop_id"], name: "index_abandoned_carts_on_shop_id"
