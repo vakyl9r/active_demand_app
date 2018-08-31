@@ -38,27 +38,28 @@
     </table>
   ")
   $('#abandoned-cart').append("
-    <p>
-      Enable abandoned cart?
+    <div>
+      <span>Enable abandoned cart?</span>
       <input type='checkbox' v-if='abandoned_cart.enable' checked id='abandoned-cart-enable'>
       <input type='checkbox' v-else id='abandoned-cart-enable'>
-    </p
-    <p>On adandoned cart, post to:
+    </div>
+    <div>
+      <span>On adandoned cart, post to:</span>
       <select class='form-select'>
         <option disabled selected>Choose a form</option>
         <option v-for='form in forms' v-if='form.id == abandoned_cart.form_id' selected v-bind:data-form-id='form.id'>{{form.name}}</option>
         <option v-else v-bind:data-form-id='form.id'>{{form.name}}</option>
       </select>
-      <span class='field-mapping'></span>
-    </p>
-    <p>
-      Consider a cart stale if it sits for:
+      <span class='field-mapping' v-bind:data-abandoned-cart-id='abandoned_cart.id'></span>
+    </div>
+    <div>
+      <span>Consider a cart stale if it sits for:</span>
       <input type='number' min='1' id='abandoned-cart-time' v-bind:value='abandoned_cart.time'>
       <select class='time-select'>
         <option v-for='time_parser in time_parsers' v-if='abandoned_cart.time_parser == time_parser' selected >{{ time_parser }}</option>
         <option v-else>{{ time_parser }}</option>
       </select>
-    </p>
+    </div>
     <button id='save-abandoned-cart' v-bind:data-abandoned-cart-id='abandoned_cart.id'>Save cart settings</button>
   ")
   abandoned_cart = data.data_abandoned_cart
@@ -101,23 +102,23 @@
       error: (data) ->
         ShopifyApp.flashError('Something wrong with your abandoned cart. Please try again later.')
   $('#abandoned-cart').on "click", ".field-mapping", ->
-    form_id = $('#abandoned_cart').find('select').val()
-    if form_id != undefined
+    form_id = $('#abandoned-cart').find('.form-select option:selected').data('form-id')
+    if form_id
       key = $('#api-key').data('api-key')
-      webhook_id = $(this).data('webhook-id')
+      abandoned_cart_id = $(this).data('abandoned-cart-id')
     else
       alert('Please, choose Form')
       return false
     $.ajax
       type: 'POST'
-      url: '/get_fields'
-      data: { form_id: form_id, key: key, webhook_id: webhook_id }
+      url: '/get_fields_abandoned_cart'
+      data: { form_id: form_id, key: key, abandoned_cart_id: abandoned_cart_id }
       dataType: "json"
       success: (data) ->
         field_list = JSON.parse(data.body)
         webhook_list = data.webhook_columns
         ad_webhook = data.ad_webhook
-        $('#field-mapping-modal-abandoned-cart').html('').append("
+        $('#field-mapping-modal').html('').append("
           <span class='close-modal'></span>
           <table id='vue_fields_#{form_id}'>
             <tr>
@@ -127,14 +128,14 @@
             <tr v-for='field in fields'>
               <td>{{ field.label }}</td>
               <td>
-                <select class='webhook-selector' v-bind:data-select-for='field.key'>
+                <select class='webhook-selector-for-abandoned-cart' v-bind:data-select-for='field.key'>
                   <option selected disabled >Choose webhook field</option>
                   <option v-for='webhook in webhooks' v-bind:data-webhook-field='webhook.key' v-bind:value='webhook.key'>{{ webhook.humanize }}</option>
                 </select>
               </td>
             </tr>
           </table>
-          <span class='save-map' data-webhook-topic='#{webhook_topic}' data-webhook-id='#{webhook_id}' data-form-id='#{form_id}'>Save</span>
+          <span class='save-map-for-ab-cart' data-webhook-id='#{abandoned_cart_id}' data-form-id='#{form_id}'>Save</span>
         ")
         $('.app-fill').fadeIn()
         vue_fields = new Vue({
@@ -149,34 +150,28 @@
                   $.each ad_webhook, ->
                     ad = this.ad
                     webhook = this.webhook
-                    $(".webhook-selector[data-select-for='#{ad}']").val(webhook)
+                    $(".webhook-selector-for-abandoned-cart[data-select-for='#{ad}']").val(webhook)
         })
-        $('#field-mapping-modal-abandoned-cart').on "click", ".save-map", ->
+        $('#field-mapping-modal').on "click", ".save-map-for-ab-cart", ->
           activedemand_array = []
           shopify_array = []
-          webhook_topic = $(this).data('webhook-topic')
           id = $(this).data('webhook-id')
           form_id = $(this).data('form-id')
-          $('.webhook-selector').each ->
+          $('.webhook-selector-for-abandoned-cart').each ->
             shopify_value = $(this).val()
             activedemand_value = $(this).data('select-for')
             activedemand_array.push(activedemand_value)
             shopify_array.push(shopify_value)
           $.ajax
             type: 'PATCH'
-            url:  "/active_demand_webhooks/#{id}"
-            data: { form_id: form_id, activedemand_array: activedemand_array, shopify_array: shopify_array, webhook_topic: webhook_topic }
+            url:  "/save_adfields_abandoned_cart/#{id}"
+            data: { form_id: form_id, activedemand_array: activedemand_array, shopify_array: shopify_array }
             dataType: "json"
             success: (data) ->
               ShopifyApp.flashNotice('Map successfully saved')
               $('.app-fill').fadeOut()
             error: (data) ->
               ShopifyApp.flashError('Something went wrong. Please, try again later')
-  $('#field-mapping-modal-abandoned-cart').on "click", ".close-modal", ->
-    $('.app-fill').fadeOut();
-  $(document).on 'click', (event) ->
-    if !$(event.target).closest('#field-mapping-modal-abandoned-cart').length
-      $('.app-fill').fadeOut()
 
 @vue_test_function = (key, shop_id) ->
   vue_adkey = new Vue({
