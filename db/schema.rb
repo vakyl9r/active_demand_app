@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_23_090102) do
+ActiveRecord::Schema.define(version: 2018_08_31_055712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "abandoned_carts", force: :cascade do |t|
+    t.bigint "shop_id"
+    t.boolean "enable", default: false
+    t.text "fields", default: ["email", "first_name", "last_name", "name", "phone", "country", "province", "city", "address1", "address2", "zip", "company"], array: true
+    t.jsonb "ad_fields", default: [], array: true
+    t.string "form_id"
+    t.integer "time", default: 1
+    t.string "time_parser", default: "Hours"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_id"], name: "index_abandoned_carts_on_shop_id"
+  end
 
   create_table "active_demand_webhooks", force: :cascade do |t|
     t.bigint "shop_id"
@@ -49,6 +62,7 @@ ActiveRecord::Schema.define(version: 2018_08_23_090102) do
     t.text "fields", default: [], array: true
   end
 
+  add_foreign_key "abandoned_carts", "shops"
   add_foreign_key "active_demand_webhooks", "shops"
   add_foreign_key "adkeys", "shops"
 end

@@ -1,7 +1,20 @@
 class AdkeysController < ApplicationController
   before_action :set_adkey, only: [:show, :edit, :update, :destroy]
+  before_action :set_abandoned_cart, only: [:update_abandoned_cart, :save_adfields_abandoned_cart]
   respond_to :js, :html, :json
   require 'net/http'
+
+  def update_abandoned_cart
+    enable = params[:enable]
+    time = params[:time]
+    form_id = params[:form_id]
+    time_parser = params[:time_parser]
+    if @abandoned_cart.update(enable: enable, time: time, form_id: form_id, time_parser: time_parser )
+      render json: { abandoned_cart: @abandoned_cart}
+    else
+      render json: @abandoned_cart.errors
+    end
+  end
 
   def create
     @adkey = Adkey.new(adkey_params)
@@ -43,8 +56,9 @@ class AdkeysController < ApplicationController
     res = Net::HTTP.get_response(uri)
     res2 = Net::HTTP.get_response(uri2)
     @shopify_webhooks = WebhookName.all
+    @abandoned_cart = AbandonedCart.find_by(shop_id: params[:shop_id])
     if res.is_a?(Net::HTTPSuccess)
-      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key], data_webhooks: @shopify_webhooks }
+      render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key], data_webhooks: @shopify_webhooks, data_abandoned_cart: @abandoned_cart }
     else
       render json: { errors: res.body }, status: 409
     end
@@ -69,29 +83,47 @@ class AdkeysController < ApplicationController
     end
   end
 
-  def save_adfields
+  def get_fields_abandoned_cart
+    @webhook = AbandonedCart.find(params[:abandoned_cart_id])
+    @webhook_columns = []
+    @webhook.fields.each do |column_name|
+      @webhook_columns.push key: column_name, humanize: column_name.titleize
+    end
+    uri = URI('https://api.activedemand.com/v1/forms/fields.json')
+    parameters = { form_id: params[:form_id], 'api-key': params[:key]}
+    uri.query = URI.encode_www_form(parameters )
+    res = Net::HTTP.get_response(uri)
+    if res.is_a?(Net::HTTPSuccess)
+      render json: { body: res.body, webhook_columns: @webhook_columns, ad_webhook: @webhook.ad_fields}
+    else
+      render json: { errors: res.body }, status: 409
+    end
+  end
+
+  def save_adfields_abandoned_cart
     activedemand_array = params[:activedemand_array]
     shopify_array = params[:shopify_array]
-    webhook_topic = params[:webhook_topic]
-    id = params[:id]
-    @adw_params = []
+    @abc_params = []
+
     shopify_array.each_with_index do |webhook, index|
       if !webhook.blank?
-        table_column = webhook.remove(' ').tableize.singularize
-        @adw_params.push "#{activedemand_array[index]}": table_column
+        @abc_params.push ad: activedemand_array[index], webhook: webhook
       end
     end
-    @activedemandwebhook = ActiveDemandWebhook.find_by(id: id)
-    if @activedemandwebhook
-      @activedemandwebhook.update(topic: webhook_topic, fields: @adw_params)
+
+    if @abandoned_cart
+      @abandoned_cart.update(ad_fields: @abc_params, form_id: params[:form_id])
     end
-    #ActiveDemandWebhook.create(shop_id: shop_id, topic: webhook_topic, fields: @adw_params)
-    render json: { body: @adw_params }
+    render json: { body: @abc_params }
   end
 
   private
     def set_adkey
       @adkey = Adkey.find(params[:id])
+    end
+
+    def set_abandoned_cart
+      @abandoned_cart = AbandonedCart.find(params[:id])
     end
 
     def adkey_params
