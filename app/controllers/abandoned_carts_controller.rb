@@ -11,7 +11,7 @@ class AbandonedCartsController < ApplicationController
       else
         time = @shop.abandoned_cart.time
       end
-      AbandonedCartJob.set(wait: time.minutes).perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h, abandoned_cart: @shop.abandoned_cart )
+      AbandonedCartJob.set(wait: time.hours).perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h, abandoned_cart: @shop.abandoned_cart )
     end
     head :no_content
   end
