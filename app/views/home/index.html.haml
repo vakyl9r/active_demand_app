@@ -2,62 +2,75 @@
   :javascript
     ShopifyApp.ready(function(){
       ShopifyApp.Bar.initialize({
-        icon: '/assets/app_logo.png'
+        icon: '/assets/app_logo.png',
+        buttons: {
+          primary: {
+            label: "API Key", callback: function(){ $('#api-key-container').fadeIn(); }
+          },
+          secondary: [
+            { label: "Help", callback: function(){ $('#help-pop-up').fadeIn(); } },
+          ],
+        },
       });
     });
-%h2 Webhooks
-- if @webhooks.present?
-  %ul
-    - @webhooks.each do |webhook|
-      %li
-        = webhook
-        \: #{webhook.address}
-- else
-  %p This app has not created any webhooks for this Shop. Add webhooks to your ShopifyApp initializer if you need webhooks
+
 %span#shop-id{'data-shop-id': @shop.id }
-%h2 Api Key
-= form_with(model: @adkey, local: true) do |form|
-  - if @adkey.errors.any?
-    #error_explanation
-      %h2
-        = pluralize(@adkey.errors.count, "error")
-        prohibited this setting from being saved:
-      %ul
-        - @adkey.errors.full_messages.each do |message|
-          %li= message
-  #vue_adkey.form-group.left-intent
-    = form.label :key
-    = form.text_field :key, id: :adkey_key, class: 'form-control two-third', 'v-on:change':'verify_key', 'v-model':'key'
-  .actions
-    = form.submit 'Save Api Key', id: 'api_key_save'
-%hr
 
-.container#content-container
-  %h2 Current Forms
-  #vue_forms
+#api-key-container
+  .api-key-wrapper
+    %p
+      Please, enter a valid API key from your ActiveDEMAND Account. You can find it on
+      %b Administration -> Account Settings
+      page.
+    = form_with(model: @adkey, local: true) do |form|
+      - if @adkey.errors.any?
+        #error_explanation
+          %h2
+            = pluralize(@adkey.errors.count, "error")
+            prohibited this setting from being saved:
+          %ul
+            - @adkey.errors.full_messages.each do |message|
+              %li= message
+      #vue_adkey.Polaris-TextField
+        = form.label :key
+        = form.text_field :key, id: :adkey_key, class: 'Polaris-TextField__Input', 'v-on:change':'verify_key', 'v-model':'key'
+        .Polaris-TextField__Backdrop
+      .actions
+        = form.submit 'Save Api Key', id: 'api_key_save', class: 'Polaris-Button Polaris-Button--primary'
 
-  %h2 Current Dynamic Blocks
-  #vue_blocks
-  - if @shop.adkey.key?
+.tab
+  %button.tablinks{'data-tab': 'content'}
+    %span Content
+    %span.tab-decoration
+  %button.tablinks{'data-tab': 'automation'}
+    %span Automation
+    %span.tab-decoration
+  %button.tablinks{'data-tab': 'cart-recovery'}
+    %span Cart Recovery
+    %span.tab-decoration
+
+.tabcontent#content
+  .container#content-container
+    %h2 Current Forms
+    #vue_forms
+
+    %h2 Current Dynamic Blocks
+    #vue_blocks
     :javascript
       vue_test_function("#{@shop.adkey.key}", "#{@shop.id}")
 
-%hr
+.tabcontent#automation
+  .container#triggers-container
+    .flex-row
+      %h2 Triggers
+      %button.create-new-webhook.custom-button New
+    %table#triggers
+      %tbody
+    - if @shop.adkey.key?
+      - if @shop.active_demand_webhooks.exists?
+        :javascript
+          all_ad_webhooks("#{@shop.id}")
 
-.container#triggers-container
-  .flex-row
-    %h2 Triggers
-    %button.create-new-webhook NEW
-  %table#triggers
-    %tbody
-  - if @shop.active_demand_webhooks.exists?
-    :javascript
-      all_ad_webhooks("#{@shop.id}")
-
-%hr
-
-.container#abandoned-cart-container
-  %h2 Abandoned Cart
-  #abandoned-cart
-
-%hr
+.tabcontent#cart-recovery
+  .container#abandoned-cart-container
+    #abandoned-cart

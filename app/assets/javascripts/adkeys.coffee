@@ -39,28 +39,62 @@
   ")
   $('#abandoned-cart').append("
     <div>
-      <span>Enable abandoned cart?</span>
-      <input type='checkbox' v-if='abandoned_cart.enable' checked id='abandoned-cart-enable'>
-      <input type='checkbox' v-else id='abandoned-cart-enable'>
+      <label class='Polaris-Choice' for='abandoned-cart-enable'>
+        <span class='Polaris-Choice__Control'>
+          <span class='Polaris-Checkbox'>
+            <input id='abandoned-cart-enable' type='checkbox' class='Polaris-Checkbox__Input' aria-invalid='false' role='checkbox' aria-checked='false' value='' v-if='abandoned_cart.enable' checked>
+            <input id='abandoned-cart-enable' type='checkbox' class='Polaris-Checkbox__Input' aria-invalid='false' role='checkbox' aria-checked='false' value='' v-else>
+            <span class='Polaris-Checkbox__Backdrop'></span>
+            <span class='Polaris-Checkbox__Icon'>
+              <span class='Polaris-Icon'>
+                <svg class='Polaris-Icon__Svg' viewBox='0 0 20 20' focusable='false' aria-hidden='true'>
+                  <path d='M8.315 13.859l-3.182-3.417a.506.506 0 0 1 0-.684l.643-.683a.437.437 0 0 1 .642 0l2.22 2.393 4.942-5.327a.437.437 0 0 1 .643 0l.643.684a.504.504 0 0 1 0 .683l-5.91 6.35a.437.437 0 0 1-.642 0'></path>
+                </svg>
+              </span>
+            </span>
+          </span>
+        </span>
+        <span class='Polaris-Choice__Label'>Enable abandoned cart?</span>
+      </label>
     </div>
-    <div>
-      <span>On adandoned cart, post to:</span>
-      <select class='form-select'>
-        <option disabled selected>Choose a form</option>
-        <option v-for='form in forms' v-if='form.id == abandoned_cart.form_id' selected v-bind:data-form-id='form.id'>{{form.name}}</option>
-        <option v-else v-bind:data-form-id='form.id'>{{form.name}}</option>
-      </select>
-      <span class='field-mapping' v-bind:data-abandoned-cart-id='abandoned_cart.id'></span>
+    <div id='abandoned-cart-body' v-if='abandoned_cart.enable' style='display: block;'>
+      <table>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Field mapping:</th>
+        </tr>
+        <tr>
+          <td>On adandoned cart, post to:</td>
+          <td>
+            <select class='form-select'>
+              <option disabled selected>Choose a form</option>
+              <option v-for='form in forms' v-if='form.id == abandoned_cart.form_id' selected v-bind:data-form-id='form.id'>{{form.name}}</option>
+              <option v-else v-bind:data-form-id='form.id'>{{form.name}}</option>
+            </select>
+          </td>
+          <td>
+            <span class='field-mapping' v-bind:data-abandoned-cart-id='abandoned_cart.id'></span>
+          </td>
+        </tr>
+        <tr>
+          <td>Consider a cart stale if it sits for:</td>
+          <td>
+            <input type='number' min='1' id='abandoned-cart-time' v-bind:value='abandoned_cart.time'>
+          </td>
+          <td>
+            <select class='time-select'>
+              <option v-for='time_parser in time_parsers' v-if='abandoned_cart.time_parser == time_parser' selected >{{ time_parser }}</option>
+              <option v-else>{{ time_parser }}</option>
+            </select>
+          </td>
+        </tr>
+      </table>
     </div>
-    <div>
-      <span>Consider a cart stale if it sits for:</span>
-      <input type='number' min='1' id='abandoned-cart-time' v-bind:value='abandoned_cart.time'>
-      <select class='time-select'>
-        <option v-for='time_parser in time_parsers' v-if='abandoned_cart.time_parser == time_parser' selected >{{ time_parser }}</option>
-        <option v-else>{{ time_parser }}</option>
-      </select>
+    <div class='actions'>
+      <button id='save-abandoned-cart' v-bind:data-abandoned-cart-id='abandoned_cart.id' class='custom-button'>Save Abandoned Cart settings
+      </button>
     </div>
-    <button id='save-abandoned-cart' v-bind:data-abandoned-cart-id='abandoned_cart.id'>Save cart settings</button>
   ")
   abandoned_cart = data.data_abandoned_cart
   forms = JSON.parse(data.data_forms)
@@ -86,6 +120,8 @@
       time_parsers: ['Hours', 'Days']
     }
   })
+  $('#abandoned-cart').on 'click', '#abandoned-cart-enable', ->
+    $('#abandoned-cart-body').toggle()
   $('#abandoned-cart').on 'click', '#save-abandoned-cart', ->
     id = $(this).data('abandoned-cart-id')
     form_id = $('#abandoned-cart .form-select option:selected').data('form-id')
@@ -135,7 +171,8 @@
               </td>
             </tr>
           </table>
-          <span class='save-map-for-ab-cart' data-webhook-id='#{abandoned_cart_id}' data-form-id='#{form_id}'>Save</span>
+          <button type='button' class='custom-button save-map-for-ab-cart' data-webhook-id='#{abandoned_cart_id}' data-form-id='#{form_id}'>Save
+          </button>
         ")
         $('.app-fill').fadeIn()
         vue_fields = new Vue({
@@ -191,19 +228,25 @@
           dataType: "json"
           success: (data) ->
             ShopifyApp.flashNotice('API key verified')
+            $('#api_key_save').removeClass('Polaris-Button--disabled')
             update_forms_and_blocks(data)
           error: (data) ->
             ShopifyApp.flashError('Wrong API key')
+            $('#api_key_save').addClass('Polaris-Button--disabled')
             vue_forms.forms = []
             vue_blocks.blocks = []
     }
   })
-  $.ajax
-    type: 'POST'
-    url: '/active_demand_api_key_verification'
-    data: { key: key, shop_id: shop_id }
-    dataType: "json"
-    success: (data) ->
-      vue_init_function(data)
-    error: (data) ->
-      ShopifyApp.flashError('Wrong API key')
+  if key != ''
+    $.ajax
+      type: 'POST'
+      url: '/active_demand_api_key_verification'
+      data: { key: key, shop_id: shop_id }
+      dataType: "json"
+      success: (data) ->
+        vue_init_function(data)
+        $('.tablinks').first().click()
+      error: (data) ->
+        ShopifyApp.flashError('Wrong API key')
+  else
+    $('#api-key-container').fadeIn()

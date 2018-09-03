@@ -92,7 +92,9 @@
                   </td>
                 </tr>
               </table>
-              <span class='save-map' data-webhook-topic='#{webhook_topic}' data-webhook-id='#{webhook_id}' data-form-id='#{form_id}'>Save</span>
+              <button class='custom-button save-map' data-webhook-topic='#{webhook_topic}' data-webhook-id='#{webhook_id}' data-form-id='#{form_id}'>
+                Save
+              </button>
             ")
             $('.app-fill').fadeIn()
             vue_fields = new Vue({
