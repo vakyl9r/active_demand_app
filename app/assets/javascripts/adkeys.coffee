@@ -17,8 +17,8 @@
       </tr>
       <tr class='form-list-item' v-bind:id='form.id' v-for='form in forms'>
         <td>{{ form.name }}</td>
-        <td>{{ form.id }}</td>
-        <td>Insert copy here!</td>
+        <td class='form-data'>{{ compile(form.id) }}</td>
+        <td class='form-clipboard'><span class='copy'></span></td>
       </tr>
     </table>
     <span id='api-key' data-api-key='#{data.key}'></span>
@@ -32,8 +32,8 @@
       </tr>
       <tr v-for='block in blocks'>
         <td>{{ block.name }}</td>
-        <td>{{ block.id }}</td>
-        <td>Insert copy here!</td>
+        <td class='block-data'>{{ compile(block.id) }}</td>
+        <td class='block-clipboard'><span class='copy'></span></td>
       </tr>
     </table>
   ")
@@ -105,12 +105,68 @@
     data:{
       forms: forms
     }
+    methods: {
+      compile: (id) ->
+        string = "<div data-type='Form' data-id='#{id}' class='activedemand-replace'></div>"
+    }
+    mounted: ->
+      this.$nextTick ->
+        form_clipboard = new ClipboardJS('.form-clipboard',
+          text: (trigger) ->
+            $(trigger).parent().children('.form-data').text()
+        )
+
+        form_data_clipboard = new ClipboardJS('.form-data',
+          text: (trigger) ->
+            $(trigger).text()
+        )
+
+        form_clipboard.on 'success', (e) ->
+          ShopifyApp.flashNotice("This form: '#{e.text}' successfully copied to clipboard.")
+          e.clearSelection();
+
+        form_clipboard.on 'error', (e) ->
+          ShopifyApp.flashError("Something went wrong with form copy. Please, try again later.")
+
+        form_data_clipboard.on 'success', (e) ->
+          ShopifyApp.flashNotice("This form: '#{e.text}' successfully copied to clipboard.")
+          e.clearSelection();
+
+        form_data_clipboard.on 'error', (e) ->
+          ShopifyApp.flashError("Something went wrong with form copy. Please, try again later.")
   })
   window.vue_blocks = new Vue({
     el:'#vue_blocks',
     data:{
       blocks: blocks
     }
+    methods: {
+      compile: (id) ->
+        string = "<div data-type='DynamicBlock' data-id='#{id}' class='activedemand-replace'></div>"
+    }
+    mounted: ->
+      this.$nextTick ->
+        block_clipboard = new ClipboardJS('.block-clipboard',
+          text: (trigger) ->
+            $(trigger).parent().children('.block-data').text()
+        )
+        block_data_clipboard = new ClipboardJS('.block-data',
+          text: (trigger) ->
+            $(trigger).text()
+        )
+        block_clipboard.on 'success', (e) ->
+          ShopifyApp.flashNotice("This block: '#{e.text}' successfully copied to clipboard.")
+          e.clearSelection();
+
+        block_clipboard.on 'error', (e) ->
+          ShopifyApp.flashError("Something went wrong with block copy. Please, try again later.")
+
+        block_data_clipboard.on 'success', (e) ->
+          ShopifyApp.flashNotice("This block: '#{e.text}' successfully copied to clipboard.")
+          e.clearSelection();
+
+        block_data_clipboard.on 'error', (e) ->
+          ShopifyApp.flashError("Something went wrong with block copy. Please, try again later.")
   })
   window.abandoned_cart = new Vue({
     el:'#abandoned-cart',

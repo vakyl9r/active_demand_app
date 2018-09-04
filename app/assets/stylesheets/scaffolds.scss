@@ -84,25 +84,25 @@ label {
   display: block;
 }
 
-.field-mapping{
+.field-mapping, .delete-webhook, .copy{
   display: inline-block;
   width: 20px;
   height: 20px;
-  background: url('edit.png') no-repeat;
-  background-size: contain;
   margin: 0 auto;
   vertical-align: middle;
   cursor: pointer;
 }
-.delete-webhook{
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: url('garbage.png') no-repeat;
-  vertical-align: middle;
+.field-mapping{
+  background: url('edit.png') no-repeat;
   background-size: contain;
-  margin: 0 auto;
-  cursor: pointer;
+}
+.delete-webhook{
+  background: url('garbage.png') no-repeat;
+  background-size: contain;
+}
+.copy{
+  background: url('copy.png') no-repeat;
+  background-size: contain;
 }
 .app-fill{
   width: 100%;
