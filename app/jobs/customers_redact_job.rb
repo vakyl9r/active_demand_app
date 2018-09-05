@@ -1,9 +1,11 @@
 class CustomersRedactJob < ApplicationJob
+  require 'net/http'
   queue_as :default
 
-  def perform(webhook)
-    @shop = Shop.find_by(shopify_domain: webhook.shop_domain)
-    @collected_email = @shop.collected_emails.find_by(email: webhook.customer.email)
-    @collected_email.destroy
+  def perform(shop_domain:, webhook:)
+    shop = Shop.find_by(shopify_domain: shop_domain)
+    shop.with_shopify_session do
+      p 'Customer redact webhook'
+    end
   end
 end

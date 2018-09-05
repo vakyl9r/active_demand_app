@@ -1,4 +1,5 @@
 class GdprWebhooksController < ApplicationController
+  include ShopifyApp::WebhookVerification
 
   def customers_redact
     params.permit!
@@ -16,8 +17,7 @@ class GdprWebhooksController < ApplicationController
 
   def customers_data_request
     params.permit!
-    puts params
-    CustomersDataRequestJob.perform_later(webhook: webhook_params.to_h)
+    CustomersDataRequestJob.perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h)
     head :ok
   end
 

@@ -11,9 +11,9 @@ Rails.application.routes.draw do
   patch 'update_abandoned_cart/:id', to: 'adkeys#update_abandoned_cart'
   post '/abandoned_carts/create_checkout', to: 'abandoned_carts#create_checkout'
 
-  post 'customers/redact', to: 'gdpr_webhooks#customers_redact'
-  post 'shop/redact', to: 'gdpr_webhooks#shop_redact'
-  post 'customers/data_request', to: 'gdpr_webhooks#customers_data_request'
+  post 'customers_redact', to: 'gdpr_webhooks#customers_redact'
+  post 'shop_redact', to: 'gdpr_webhooks#shop_redact'
+  post 'customers_data_request', to: 'gdpr_webhooks#customers_data_request'
 
   root to: 'home#index'
   mount ShopifyApp::Engine, at: '/'
