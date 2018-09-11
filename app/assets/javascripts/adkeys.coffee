@@ -284,11 +284,9 @@
           dataType: "json"
           success: (data) ->
             ShopifyApp.flashNotice('API key verified')
-            $('#api_key_save').removeClass('Polaris-Button--disabled')
             update_forms_and_blocks(data)
           error: (data) ->
-            ShopifyApp.flashError('Wrong API key')
-            $('#api_key_save').addClass('Polaris-Button--disabled')
+            ShopifyApp.flashError('Wrong or Empty API key')
             vue_forms.forms = []
             vue_blocks.blocks = []
     }
