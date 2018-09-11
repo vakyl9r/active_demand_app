@@ -11,6 +11,10 @@ Rails.application.routes.draw do
   patch 'update_abandoned_cart/:id', to: 'adkeys#update_abandoned_cart'
   post '/abandoned_carts/create_checkout', to: 'abandoned_carts#create_checkout'
 
+  post 'customers_redact', to: 'gdpr_webhooks#customers_redact'
+  post 'shop_redact', to: 'gdpr_webhooks#shop_redact'
+  post 'customers_data_request', to: 'gdpr_webhooks#customers_data_request'
+
   root to: 'home#index'
   mount ShopifyApp::Engine, at: '/'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
