@@ -15,6 +15,13 @@
         <th>Code</th>
         <th>Copy</th>
       </tr>
+      <tr v-if='forms.length == 0'>
+        <td class='empty-td' colspan='3'>
+        You currently do not have any Web Forms in your ActiveDEMAND account.
+        Any forms that you have created in ActiveDEMAND will automatically show
+        up here.
+        </td>
+      </tr>
       <tr class='form-list-item' v-bind:id='form.id' v-for='form in forms'>
         <td>{{ form.name }}</td>
         <td class='form-data'>{{ compile(form.id) }}</td>
@@ -29,6 +36,13 @@
         <th>Block Name</th>
         <th>Code</th>
         <th>Copy</th>
+      </tr>
+      <tr v-if='blocks.length == 0' >
+        <td class='empty-td' colspan='3'>
+        You currently do not have any Dynamic Blocks in your ActiveDEMAND account.
+        Any blocks that you have created in ActiveDEMAND will automatically show
+        up here.
+        </td>
       </tr>
       <tr v-for='block in blocks'>
         <td>{{ block.name }}</td>
@@ -57,7 +71,7 @@
         <span class='Polaris-Choice__Label'>Enable abandoned cart?</span>
       </label>
     </div>
-    <div id='abandoned-cart-body' v-if='abandoned_cart.enable' style='display: block;'>
+    <div id='abandoned-cart-body' v-show='abandoned_cart.enable'>
       <table>
         <tr>
           <th></th>
@@ -303,4 +317,5 @@
       error: (data) ->
         ShopifyApp.flashError('Wrong API key')
   else
-    $('#api-key-container').fadeIn()
+    $(".tablinks[data-tab='content']").addClass('active')
+    $('#content.tabcontent').fadeIn()
