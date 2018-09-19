@@ -93,15 +93,15 @@ label {
   cursor: pointer;
 }
 .field-mapping{
-  background: url('edit.png') no-repeat;
+  background: asset-url('edit.png') no-repeat;
   background-size: contain;
 }
 .delete-webhook{
-  background: url('garbage.png') no-repeat;
+  background: asset-url('garbage.png') no-repeat;
   background-size: contain;
 }
 .copy{
-  background: url('copy.png') no-repeat;
+  background: asset-url('copy.png') no-repeat;
   background-size: contain;
 }
 .app-fill{
@@ -153,7 +153,7 @@ label {
   display: block;
   width: 20px;
   height: 20px;
-  background: url('close-button.png') no-repeat;
+  background: asset-url('close-button.png') no-repeat;
   background-size: contain;
   cursor: pointer;
   float: right;
@@ -293,10 +293,22 @@ label {
 }
 
 #abandoned-cart-body{
-  display: none;
   animation: fadeEffect 1s;
 }
-
+.instructions{
+  width: 70%;
+}
+.instruction-text-block{
+  padding: 20px 25% 0 0;
+}
+.instructions-image{
+  margin-top: 20px;
+  width: 100%;
+  object-fit: cover;
+}
+.empty-td{
+  padding: 40px 10px !important;
+}
 /* Go from zero to full opacity */
 @keyframes fadeEffect {
   from {opacity: 0;}

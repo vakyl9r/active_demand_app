@@ -2,13 +2,13 @@
   :javascript
     ShopifyApp.ready(function(){
       ShopifyApp.Bar.initialize({
-        icon: '/assets/app_logo.png',
+        icon: "#{asset_url('app_logo.png')}",
         buttons: {
           primary: {
             label: "API Key", callback: function(){ $('#api-key-container').fadeIn(); }
           },
           secondary: [
-            { label: "Help", callback: function(){ $('#help-pop-up').fadeIn(); } },
+            { label: "Help", href:'https://gda.activedemand.com/XxMsg', target:'new' },
           ],
         },
       });
@@ -53,11 +53,33 @@
 
 .tabcontent#content
   .container#content-container
-    %h2 Current Forms
-    #vue_forms
+    -if @shop.adkey.key.empty?
+      %h2 ActiveDEMAND for Shopify
+      .instructions
+        .instruction-text-block
+          %p You will require an ActiveDemand account to use this plugin. With an ActiveDEMAND account you will be able to:
+          %ul
+            %li Deploy Webforms for your pages
+            %li Deploy Dynamic Content for your pages
+            %li Dynamically swap content based on GEO-IP data
+            %li Automatically change banners based on campaign duration
+            %li Stop showing forms to people who have already subscribed
+            %li Deploy Exit attempt Pop-ups and Subscriber bars
+            %li Automatically send emails to those who purchase
+            %li Automate cart recovery
+            %li Send email campaigns to your subscribers
+          %p
+            To sign up for your ActiveDEMAND account, click
+            %a{href:'https://www.activedemand.com/small-business-marketing-automation-software/'}here
+          %br
+          %p You will need to enter your application key in order to enable this app. You can find your API key in your ActiveDEMAND account settings:
+        = image_tag(asset_path('example.jpg'), class:'instructions-image')
+    -else
+      %h2 Current Forms
+      #vue_forms
 
-    %h2 Current Dynamic Blocks
-    #vue_blocks
+      %h2 Current Dynamic Blocks
+      #vue_blocks
     :javascript
       vue_test_function("#{@shop.adkey.key}", "#{@shop.id}")
 
