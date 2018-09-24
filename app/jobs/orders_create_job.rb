@@ -13,10 +13,18 @@ class OrdersCreateJob < ActiveJob::Base
           uri.query = URI.encode_www_form(parameters )
           form_params = {}
           form.fields.each do |field|
-            if field['webhook'] == 'email'
+            if field['webhook'].include?('customer_') && webhook[:customer].present?
+              webhook_field = field['webhook'].remove('customer_')
+              form_params[:"#{field['ad']}"] = webhook[:customer][:"#{webhook_field}"]
+            elsif field['webhook'] == 'email' || field['webhook'] == 'id' ||
+              field['webhook'] == 'order_number' || field['webhook'] == 'total_price' ||
+              field['webhook'] == 'subtotal_price' || field['webhook'] == 'order_status_url' ||
+              field['webhook'] == 'line_items'
               form_params[:"#{field['ad']}"] = webhook[:"#{field['webhook']}"]
             else
-              form_params[:"#{field['ad']}"] = webhook[:shipping_address][:"#{field['webhook']}"]
+              if webhook[:shipping_address].present?
+                form_params[:"#{field['ad']}"] = webhook[:shipping_address][:"#{field['webhook']}"]
+              end
             end
           end
           res = Net::HTTP.post_form(uri, form_params)

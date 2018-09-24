@@ -13,10 +13,18 @@ class CustomersUpdateJob < ActiveJob::Base
           uri.query = URI.encode_www_form(parameters )
           form_params = {}
           form.fields.each do |field|
-            if field['webhook'] == 'email' || field['webhook'] == 'note' || field['webhook'] == 'first_name' || field['webhook'] == 'last_name' || field['webhook'] == 'phone'
+            if field['webhook'] == 'id' || field['webhook'] == 'email' ||
+              field['webhook'] == 'accepts_marketing' || field['webhook'] == 'created_at' ||
+              field['webhook'] == 'updated_at' || field['webhook'] == 'first_name' ||
+              field['webhook'] == 'last_name' ||  field['webhook'] == 'orders_count' ||
+              field['webhook'] == 'state' || field['webhook'] == 'total_spent' ||
+              field['webhook'] == 'last_order_id' || field['webhook'] == 'note' ||
+              field['webhook'] == 'verified_email' || field['webhook'] == 'multipass_identifier' ||
+              field['webhook'] == 'tax_exempt' || field['webhook'] == 'phone' ||
+              field['webhook'] == 'tags' || field['webhook'] == 'last_order_name'
               form_params[:"#{field['ad']}"] = webhook[:"#{field['webhook']}"]
             else
-              if  webhook[:default_address]
+              if webhook[:default_address]
                 form_params[:"#{field['ad']}"] = webhook[:default_address][:"#{field['webhook']}"]
               end
             end
