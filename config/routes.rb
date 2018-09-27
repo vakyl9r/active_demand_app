@@ -5,11 +5,13 @@ Rails.application.routes.draw do
   post 'active_demand_api_key_verification', to: 'adkeys#active_demand_api_key_verification'
   post 'get_fields', to: 'adkeys#get_fields'
   post 'get_fields_abandoned_cart', to:'adkeys#get_fields_abandoned_cart'
-
+  get 'get_script_url', to:'adkeys#get_script_url'
   patch 'save_adfields_abandoned_cart/:id', to: 'adkeys#save_adfields_abandoned_cart'
-  post 'all_ad_webhooks', to: 'active_demand_webhooks#all_ad_webhooks'
   patch 'update_abandoned_cart/:id', to: 'adkeys#update_abandoned_cart'
-  post '/abandoned_carts/create_checkout', to: 'abandoned_carts#create_checkout'
+
+  post 'all_ad_webhooks', to: 'active_demand_webhooks#all_ad_webhooks'
+
+  post '/abandoned_carts/checkouts_update', to: 'abandoned_carts#checkouts_update'
 
   post 'customers_redact', to: 'gdpr_webhooks#customers_redact'
   post 'shop_redact', to: 'gdpr_webhooks#shop_redact'

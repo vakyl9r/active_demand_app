@@ -198,22 +198,26 @@
     time = $('#abandoned-cart-time').val()
     time_parser = $('.time-select').val()
     enable = $('#abandoned-cart-enable').prop('checked')
+    $('.spinner-overlay').fadeIn()
     $.ajax
       type: 'PATCH'
       url:  "/update_abandoned_cart/#{id}"
       data: { form_id: form_id, time: time, enable: enable, time_parser: time_parser }
       dataType: "json"
       success: (data) ->
+        $('.spinner-overlay').fadeOut()
         ShopifyApp.flashNotice('Abandoned cart saved successfully.')
       error: (data) ->
+        $('.spinner-overlay').fadeOut()
         ShopifyApp.flashError('Something wrong with your abandoned cart. Please try again later.')
   $('#abandoned-cart').on "click", ".field-mapping", ->
     form_id = $('#abandoned-cart').find('.form-select option:selected').data('form-id')
+    $('.spinner-overlay').fadeIn()
     if form_id
       key = $('#api-key').data('api-key')
       abandoned_cart_id = $(this).data('abandoned-cart-id')
     else
-      alert('Please, choose Form')
+      ShopifyApp.flashError('Please, choose Form')
       return false
     $.ajax
       type: 'POST'
@@ -224,6 +228,7 @@
         field_list = JSON.parse(data.body)
         webhook_list = data.webhook_columns
         ad_webhook = data.ad_webhook
+        $('.spinner-overlay').fadeOut()
         $('#field-mapping-modal').html('').append("
           <span class='close-modal'></span>
           <table id='vue_fields_#{form_id}'>
@@ -264,6 +269,7 @@
           shopify_array = []
           id = $(this).data('webhook-id')
           form_id = $(this).data('form-id')
+          $('.spinner-overlay').fadeIn()
           $('.webhook-selector-for-abandoned-cart').each ->
             shopify_value = $(this).val()
             activedemand_value = $(this).data('select-for')
@@ -275,11 +281,16 @@
             data: { form_id: form_id, activedemand_array: activedemand_array, shopify_array: shopify_array }
             dataType: "json"
             success: (data) ->
+              $('.spinner-overlay').fadeOut()
               ShopifyApp.flashNotice('Map successfully saved')
               $('.app-fill').fadeOut()
             error: (data) ->
+              $('.spinner-overlay').fadeOut()
               ShopifyApp.flashError('Something went wrong. Please, try again later')
-
+      error: (data) ->
+        $('.spinner-overlay').fadeOut()
+        ShopifyApp.flashError('Something went wrong. Please, try again later')
+        console.log(data.errors)
 @vue_test_function = (key, shop_id) ->
   vue_adkey = new Vue({
     el: '#vue_adkey',

@@ -18,3 +18,4 @@
 //= require vue-resource
 //= require vuex
 //= require_tree .
+//= stub clientside

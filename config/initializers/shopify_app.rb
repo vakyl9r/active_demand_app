@@ -7,7 +7,7 @@ ShopifyApp.configure do |config|
   config.after_authenticate_job = false
   config.session_repository = Shop
   config.scripttags = [
-    {event:'onload', src: 'https://static.activedemand.com/public/javascript/ad.collect.min.js.jgz'}
+    {event:'onload', src: "#{ENV['SITE_LINK']}/assets/clientside.js"}
   ]
   config.webhooks = [
     {topic: 'customers/create', address: "#{ENV['SITE_LINK']}/webhooks/customers_create", format: 'json'},
@@ -16,7 +16,7 @@ ShopifyApp.configure do |config|
     {topic: 'orders/paid', address: "#{ENV['SITE_LINK']}/webhooks/orders_paid", format: 'json'},
     {topic: 'orders/cancelled', address: "#{ENV['SITE_LINK']}/webhooks/orders_cancelled", format: 'json'},
     {topic: 'orders/updated', address: "#{ENV['SITE_LINK']}/webhooks/orders_updated", format: 'json'},
-    {topic: 'checkouts/create', address: "#{ENV['SITE_LINK']}/abandoned_carts/create_checkout", format: 'json'},
-    {topic: 'checkouts/update', address: "#{ENV['SITE_LINK']}/webhooks/checkouts_update", format: 'json'},
+    {topic: 'checkouts/create', address: "#{ENV['SITE_LINK']}/webhooks/checkouts_create", format: 'json'},
+    {topic: 'checkouts/update', address: "#{ENV['SITE_LINK']}/abandoned_carts/checkouts_update", format: 'json'},
   ]
 end

@@ -45,14 +45,17 @@
       })
       $('#triggers').on "click", ".delete-webhook", ->
         id = $(this).data('webhook-id')
+        $('.spinner-overlay').fadeIn()
         $.ajax
           type: 'DELETE'
           url:  "/active_demand_webhooks/#{id}"
           dataType: "json"
           success: (data) ->
             $("[data-webhook='#{id}']").remove()
+            $('.spinner-overlay').fadeOut()
           error: (data) ->
             ShopifyApp.flashError('Something went wrong. Please, try again later')
+            $('.spinner-overlay').fadeOut()
       $('#triggers').on "click", ".field-mapping", ->
         webhook_topic = $(this).closest('tr').find('.webhook-select option:selected').data('webhook-topic')
         if webhook_topic != undefined
@@ -61,11 +64,12 @@
             key = $('#api-key').data('api-key')
             webhook_id = $(this).data('webhook-id')
           else
-            alert('Please, choose Form')
+            ShopifyApp.flashError('Please, choose Form')
             return false
         else
-          alert('Please, choose Trigger')
+          ShopifyApp.flashError('Please, choose Trigger')
           return false
+        $('.spinner-overlay').fadeIn()
         $.ajax
           type: 'POST'
           url: '/get_fields'
@@ -96,6 +100,7 @@
                 Save
               </button>
             ")
+            $('.spinner-overlay').fadeOut()
             $('.app-fill').fadeIn()
             vue_fields = new Vue({
                 el: "#vue_fields_#{form_id}",
@@ -117,6 +122,7 @@
               webhook_topic = $(this).data('webhook-topic')
               id = $(this).data('webhook-id')
               form_id = $(this).data('form-id')
+              $('.spinner-overlay').fadeIn()
               $('.webhook-selector').each ->
                 shopify_value = $(this).val()
                 activedemand_value = $(this).data('select-for')
@@ -128,9 +134,11 @@
                 data: { form_id: form_id, activedemand_array: activedemand_array, shopify_array: shopify_array, webhook_topic: webhook_topic }
                 dataType: "json"
                 success: (data) ->
+                  $('.spinner-overlay').fadeOut()
                   ShopifyApp.flashNotice('Map successfully saved')
                   $('.app-fill').fadeOut()
                 error: (data) ->
+                  $('.spinner-overlay').fadeOut()
                   ShopifyApp.flashError('Something went wrong. Please, try again later')
       $('#field-mapping-modal').on "click", ".close-modal", ->
         $('.app-fill').fadeOut();
@@ -141,6 +149,7 @@
 $ ->
   $('.create-new-webhook').click ->
     shop_id = $('#shop-id').data('shop-id')
+    $('.spinner-overlay').fadeIn()
     $.ajax
       type: 'POST'
       url: '/active_demand_webhooks'
@@ -173,6 +182,8 @@ $ ->
             webhooks: webhooks
           }
         })
+        $('.spinner-overlay').fadeOut()
         ShopifyApp.flashNotice('New trigger created successfully')
       error: (data) ->
+        $('.spinner-overlay').fadeOut()
         ShopifyApp.flashError('Something went wrong. Please, try again later')

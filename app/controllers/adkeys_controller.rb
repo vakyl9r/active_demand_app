@@ -1,4 +1,6 @@
 class AdkeysController < ApplicationController
+  protect_from_forgery with: :null_session
+
   before_action :set_adkey, only: [:show, :edit, :update, :destroy]
   before_action :set_abandoned_cart, only: [:update_abandoned_cart, :save_adfields_abandoned_cart]
   respond_to :js, :html, :json
@@ -32,12 +34,18 @@ class AdkeysController < ApplicationController
 
   def update
     respond_to do |format|
-      if @adkey.update(adkey_params)
-        format.html { redirect_to root_path, notice: 'Api Key was successfully updated.' }
-        format.json { render :show, status: :ok, location: @adkey }
+      uri = URI('https://api.activedemand.com/v1/script_url')
+      parameters = {'api-key': params[:adkey][:key]}
+      uri.query = URI.encode_www_form(parameters )
+      res = Net::HTTP.get_response(uri)
+      if res.is_a?(Net::HTTPSuccess)
+        if @adkey.update(key: params[:adkey][:key], script_url: res.body)
+          format.html { redirect_to root_path, notice: 'Api Key was successfully updated.' }
+        else
+          format.html { redirect_to root_path, notice: 'Error has occured while updating Api Key.' }
+        end
       else
-        format.html { render :edit }
-        format.json { render json: @adkey.errors, status: :unprocessable_entity }
+        format.html { redirect_to root_path, notice: 'There has been an error with ActiveDEMAND API please try again later' }
       end
     end
   end
@@ -115,6 +123,11 @@ class AdkeysController < ApplicationController
       @abandoned_cart.update(ad_fields: @abc_params, form_id: params[:form_id])
     end
     render json: { body: @abc_params }
+  end
+
+  def get_script_url
+    shop = Shop.find_by(shopify_domain: params[:shopify_domain])
+    render json: { script_url: shop.adkey.script_url }
   end
 
   private
