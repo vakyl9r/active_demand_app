@@ -1,9 +1,9 @@
 class AbandonedCartsController < ApplicationController
   include ShopifyApp::WebhookVerification
 
-  def create_checkout
+  def checkouts_update
     params.permit!
-    CheckoutsCreateJob.perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h)
+    CheckoutsUpdateJob.perform_later(shop_domain: shop_domain, webhook: webhook_params.to_h)
     @shop = Shop.find_by(shopify_domain: shop_domain)
     if @shop.abandoned_cart.enable && @shop.abandoned_cart.form_id && @shop.abandoned_cart.time
       if @shop.abandoned_cart.time_parser == 'Days'

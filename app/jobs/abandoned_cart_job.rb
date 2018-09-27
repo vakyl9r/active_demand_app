@@ -3,7 +3,7 @@ class AbandonedCartJob < ActiveJob::Base
     shop = Shop.find_by(shopify_domain: shop_domain)
     shop.with_shopify_session do
       unless ShopifyAPI::Order.where(checkout_token: webhook[:token])
-        if webhook[:email] && webhook[:shipping_address]
+        if webhook[:email]
           parameters = { 'api-key': shop.adkey.key }
           uri = URI("https://api.activedemand.com/v1/forms/#{abandoned_cart.form_id}")
           uri.query = URI.encode_www_form(parameters )
