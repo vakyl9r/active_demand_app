@@ -130,6 +130,28 @@ class AdkeysController < ApplicationController
     render json: { script_url: shop.adkey.script_url }
   end
 
+  def create_new_account
+    shop = Shop.find(params[:shop_id])
+    shop.with_shopify_session do
+      @shopify_shop = ShopifyAPI::Shop.current
+      uri = URI("https://www2.activedemand.com/submit/form/36029")
+      form_params = {}
+      form_params[:"form[151_0]"] = @shopify_shop.name
+      form_params[:"form[51_1]"] = @shopify_shop.myshopify_domain
+      form_params[:"form[1_2]"] = @shopify_shop.shop_owner
+      #form_params[:"form[21_4]"] = @shopify_shop.email
+      form_params[:"form[21_4]"] = 'testing@activedemand.com'
+      form_params[:"form[227_5]"] = 'SBM'
+      form_params[:"form[227_6]"] = 'Trial'
+      res = Net::HTTP.post_form(uri, form_params)
+      if res.is_a?(Net::HTTPSuccess)
+        render json: { body: res, shop_email: @shopify_shop.email }
+      else
+        render json: { errors: res }, status: 409
+      end
+    end
+  end
+
   private
     def set_adkey
       @adkey = Adkey.find(params[:id])

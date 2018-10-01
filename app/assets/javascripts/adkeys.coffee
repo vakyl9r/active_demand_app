@@ -309,11 +309,11 @@
           dataType: "json"
           success: (data) ->
             ShopifyApp.flashNotice('API key verified')
-            update_forms_and_blocks(data)
+            #update_forms_and_blocks(data)
           error: (data) ->
             ShopifyApp.flashError('Wrong or Empty API key')
-            vue_forms.forms = []
-            vue_blocks.blocks = []
+            #vue_forms.forms = []
+            #vue_blocks.blocks = []
     }
   })
   if key != ''
@@ -328,5 +328,27 @@
       error: (data) ->
         ShopifyApp.flashError('Wrong API key')
   else
-    $(".tablinks[data-tab='content']").addClass('active')
-    $('#content.tabcontent').fadeIn()
+    $('#first-install-container').fadeIn()
+    $('.account-exists').click ->
+      $('#api-key-container').fadeIn();
+    $('.account-create').click ->
+      $('#first-install-container').fadeOut()
+      $('.creating-account-loader').fadeIn()
+
+      $.ajax
+        type: 'POST'
+        url: '/create_new_account'
+        data: { shop_id: shop_id }
+        dataType: "json"
+        success: (data) ->
+          $('.creating-account-loader').fadeOut()
+          $('#shop-email-address').html(data.shop_email)
+          $('#account-create-success').fadeIn()
+          #$('#adkey_key').val('5e76d2-aa464a1d-ed51e90d-24cdb1-a1462f43')
+          console.log(data.body)
+        error: (data) ->
+          ShopifyApp.flashError('Error')
+
+    $('.acs-continue').click ->
+      ShopifyApp.flashNotice('Saving your API key')
+      #$('form').submit()

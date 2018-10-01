@@ -15,15 +15,36 @@
     });
 
 %span#shop-id{'data-shop-id': @shop.id }
-
+-if @adkey.key.blank?
+  #first-install-container
+    .fi-wrapper
+      %h2
+        Connect to ActiveDEMAND
+      %p
+        The ActiveDEMAND Shopify App requires an ActiveDEMAND marketing automation account
+      .fi-buttons-container
+        %button.account-exists.Polaris-Button.Polaris-Button--primary I Have An Existing Account
+        %button.account-create.Polaris-Button I Need To Create A New Account
+  #account-create-success
+    .acs-wrapper
+      %h2
+        Success!
+      %p
+        We have sent an account confirmation email to
+        %span#shop-email-address
+      .acs-buttons-container
+        %button.acs-continue.Polaris-Button.Polaris-Button--primary Continue
+  .creating-account-loader
+    .cal-wrapper
+      %h2
+        Creating A New ActiveDEMAND Account
+      .loader
 #api-key-container
   .api-key-wrapper
     .close-wrapper
       %span.close-modal
     %p
-      Please, enter a valid API key from your ActiveDEMAND Account. You can find it on
-      %b Administration -> Account Settings
-      page.
+      Connect to Your Existing ActiveDEMAND Account
     = form_with(model: @adkey, local: true) do |form|
       - if @adkey.errors.any?
         #error_explanation
@@ -33,12 +54,18 @@
           %ul
             - @adkey.errors.full_messages.each do |message|
               %li= message
-      #vue_adkey.Polaris-TextField
-        = form.label :key
-        = form.text_field :key, id: :adkey_key, class: 'Polaris-TextField__Input', 'v-on:change':'verify_key', 'v-model':'key'
-        .Polaris-TextField__Backdrop
+      .input-field-container
+        = form.label :key, 'Enter Your API Key', class:'adkey-label'
+        #vue_adkey.Polaris-TextField
+          = form.text_field :key, id: :adkey_key, class: 'Polaris-TextField__Input', 'v-on:change':'verify_key', 'v-model':'key'
+          .Polaris-TextField__Backdrop
+      .instructions
+        .instructions-text-block
+          Your API Key can be found in your Account Settings in your existing ActiveDEMAND Account
+        = image_tag(asset_path('example.jpg'), class:'instructions-image')
       .actions
         = form.submit 'Save Api Key', id: 'api_key_save', class: 'Polaris-Button Polaris-Button--primary'
+        %button.close-modal.close-modal-button.Polaris-Button{type:'button'} Cancel
 
 .tab
   %button.tablinks{'data-tab': 'content'}
@@ -53,28 +80,7 @@
 
 .tabcontent#content
   .container#content-container
-    -if @shop.adkey.key.blank?
-      %h2 ActiveDEMAND for Shopify
-      .instructions
-        .instruction-text-block
-          %p You will require an ActiveDemand account to use this plugin. With an ActiveDEMAND account you will be able to:
-          %ul
-            %li Deploy Webforms for your pages
-            %li Deploy Dynamic Content for your pages
-            %li Dynamically swap content based on GEO-IP data
-            %li Automatically change banners based on campaign duration
-            %li Stop showing forms to people who have already subscribed
-            %li Deploy Exit attempt Pop-ups and Subscriber bars
-            %li Automatically send emails to those who purchase
-            %li Automate cart recovery
-            %li Send email campaigns to your subscribers
-          %p
-            To sign up for your ActiveDEMAND account, click
-            %a{href:'https://www.activedemand.com/small-business-marketing-automation-software/'}here
-          %br
-          %p You will need to enter your application key in order to enable this app. You can find your API key in your ActiveDEMAND account settings:
-        = image_tag(asset_path('example.jpg'), class:'instructions-image')
-    -else
+    -if @shop.adkey.key?
       %h2 Current Forms
       #vue_forms
 
