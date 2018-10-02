@@ -291,7 +291,7 @@
         $('.spinner-overlay').fadeOut()
         ShopifyApp.flashError('Something went wrong. Please, try again later')
         console.log(data.errors)
-@vue_test_function = (key, shop_id) ->
+@vue_key_function = (key, shop_id) ->
   vue_adkey = new Vue({
     el: '#vue_adkey',
     data:{
@@ -344,11 +344,12 @@
           $('.creating-account-loader').fadeOut()
           $('#shop-email-address').html(data.shop_email)
           $('#account-create-success').fadeIn()
-          #$('#adkey_key').val('5e76d2-aa464a1d-ed51e90d-24cdb1-a1462f43')
-          console.log(data.body)
+          $('#adkey_key').val(data.key)
         error: (data) ->
-          ShopifyApp.flashError('Error')
+          ShopifyApp.flashError('Something went wrong with creating your account. Please try again later.')
 
     $('.acs-continue').click ->
+      $('#account-create-success').fadeOut()
       ShopifyApp.flashNotice('Saving your API key')
-      #$('form').submit()
+      $('.spinner-overlay').fadeIn()
+      $('form').submit()

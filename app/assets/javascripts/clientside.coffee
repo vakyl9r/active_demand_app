@@ -3,7 +3,7 @@ if !location.href.includes('/orders/')
     domain = Shopify.shop
     $.ajax
       type: 'GET'
-      url: "https://fa6e5fa6.ngrok.io/get_script_url"
+      url: "https://shopify.activedemand.com/get_script_url"
       data: { shopify_domain: domain }
       dataType: "json"
       success: (data) ->
