@@ -78,7 +78,7 @@ class AdkeysController < ApplicationController
     @ad_webhook = ActiveDemandWebhook.find(params[:webhook_id])
     @webhook_columns = []
     @webhook.fields.each do |column_name|
-      @webhook_columns.push key: column_name, humanize: column_name.titleize
+      @webhook_columns.push key: column_name, humanize: column_name.titleize(keep_id_suffix: true)
     end
     uri = URI('https://api.activedemand.com/v1/forms/fields.json')
     parameters = { form_id: params[:form_id], 'api-key': params[:key]}
@@ -95,7 +95,7 @@ class AdkeysController < ApplicationController
     @webhook = AbandonedCart.find(params[:abandoned_cart_id])
     @webhook_columns = []
     @webhook.fields.each do |column_name|
-      @webhook_columns.push key: column_name, humanize: column_name.titleize
+      @webhook_columns.push key: column_name, humanize: column_name.titleize(keep_id_suffix: true)
     end
     uri = URI('https://api.activedemand.com/v1/forms/fields.json')
     parameters = { form_id: params[:form_id], 'api-key': params[:key]}
@@ -128,6 +128,30 @@ class AdkeysController < ApplicationController
   def get_script_url
     shop = Shop.find_by(shopify_domain: params[:shopify_domain])
     render json: { script_url: shop.adkey.script_url }
+  end
+
+  def create_new_account
+    shop = Shop.find(params[:shop_id])
+    shop.with_shopify_session do
+      @shopify_shop = ShopifyAPI::Shop.current
+      uri = URI("https://www2.activedemand.com/submit/form/36029")
+      form_params = {}
+      form_params[:"form[151_0]"] = @shopify_shop.name
+      form_params[:"form[51_1]"] = @shopify_shop.myshopify_domain
+      form_params[:"form[1_2]"] = @shopify_shop.shop_owner
+      form_params[:"form[21_4]"] = @shopify_shop.email
+      # Email address for testing
+      #form_params[:"form[21_4]"] = 'testing@activedemand.com'
+      form_params[:"form[227_5]"] = 'SBM'
+      form_params[:"form[227_6]"] = 'Trial'
+      res = Net::HTTP.post_form(uri, form_params)
+      if res.is_a?(Net::HTTPSuccess)
+        key = res.body[/APIKEY\[(.*?)\]APIKEY/m, 1]
+        render json: { key: key, shop_email: @shopify_shop.email }
+      else
+        render json: { errors: res.body }, status: 409
+      end
+    end
   end
 
   private

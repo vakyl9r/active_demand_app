@@ -291,7 +291,7 @@
         $('.spinner-overlay').fadeOut()
         ShopifyApp.flashError('Something went wrong. Please, try again later')
         console.log(data.errors)
-@vue_test_function = (key, shop_id) ->
+@vue_key_function = (key, shop_id) ->
   vue_adkey = new Vue({
     el: '#vue_adkey',
     data:{
@@ -309,11 +309,11 @@
           dataType: "json"
           success: (data) ->
             ShopifyApp.flashNotice('API key verified')
-            update_forms_and_blocks(data)
+            #update_forms_and_blocks(data)
           error: (data) ->
             ShopifyApp.flashError('Wrong or Empty API key')
-            vue_forms.forms = []
-            vue_blocks.blocks = []
+            #vue_forms.forms = []
+            #vue_blocks.blocks = []
     }
   })
   if key != ''
@@ -328,5 +328,28 @@
       error: (data) ->
         ShopifyApp.flashError('Wrong API key')
   else
-    $(".tablinks[data-tab='content']").addClass('active')
-    $('#content.tabcontent').fadeIn()
+    $('#first-install-container').fadeIn()
+    $('.account-exists').click ->
+      $('#api-key-container').fadeIn();
+    $('.account-create').click ->
+      $('#first-install-container').fadeOut()
+      $('.creating-account-loader').fadeIn()
+
+      $.ajax
+        type: 'POST'
+        url: '/create_new_account'
+        data: { shop_id: shop_id }
+        dataType: "json"
+        success: (data) ->
+          $('.creating-account-loader').fadeOut()
+          $('#shop-email-address').html(data.shop_email)
+          $('#account-create-success').fadeIn()
+          $('#adkey_key').val(data.key)
+        error: (data) ->
+          ShopifyApp.flashError('Something went wrong with creating your account. Please try again later.')
+
+    $('.acs-continue').click ->
+      $('#account-create-success').fadeOut()
+      ShopifyApp.flashNotice('Saving your API key')
+      $('.spinner-overlay').fadeIn()
+      $('form').submit()
