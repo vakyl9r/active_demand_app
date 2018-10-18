@@ -311,7 +311,22 @@
             ShopifyApp.flashNotice('API key verified')
             #update_forms_and_blocks(data)
           error: (data) ->
-            ShopifyApp.flashError('Wrong or Empty API key')
+            switch data.status
+              when 401
+                ShopifyApp.Modal.alert({
+                  title: "Warning!",
+                  message: "You have entered an invalid key. Please try again or contact support@activedemand.com",
+                  okButton: "I understand"
+                })
+              when 403
+                ShopifyApp.Modal.alert({
+                  title: "Warning!",
+                  message: 'You do not have sufficient permissions to access this ActiveDEMAND account.  Please contact support@activedemand.com',
+                  okButton: "I understand"
+                })
+              else
+                console.log(data)
+                ShopifyApp.flashError('Something went wrong. Please, try again later.')
             #vue_forms.forms = []
             #vue_blocks.blocks = []
     }
