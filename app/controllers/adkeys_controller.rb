@@ -68,7 +68,7 @@ class AdkeysController < ApplicationController
     if res.is_a?(Net::HTTPSuccess)
       render json: { data_forms: res.body, data_blocks: res2.body, key: params[:key], data_webhooks: @shopify_webhooks, data_abandoned_cart: @abandoned_cart }
     else
-      render json: { errors: res.body }, status: 409
+      render json: { errors: res.body }, status: res.code
     end
   end
 

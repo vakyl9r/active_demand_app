@@ -20,9 +20,24 @@ $ ->
       data: { key: key, shop_id: shop_id }
       dataType: "json"
       success: (data) ->
-        ShopifyApp.flashNotice('API key successfully saved')
+        ShopifyApp.flashNotice('Saving your API key. Please wait.')
         button.closest('form').submit()
       error: (data) ->
-        ShopifyApp.flashError('Wrong or Empty API key')
+        switch data.status
+          when 401
+            ShopifyApp.Modal.alert({
+              title: "Warning!",
+              message: "You have entered an invalid key. Please try again or contact support@activedemand.com",
+              okButton: "I understand"
+            })
+          when 403
+            ShopifyApp.Modal.alert({
+              title: "Warning!",
+              message: 'You do not have sufficient permissions to access this ActiveDEMAND account.  Please contact support@activedemand.com',
+              okButton: "I understand"
+            })
+          else
+            console.log(data)
+            ShopifyApp.flashError('Something went wrong. Please, try again later.')
         vue_forms.forms = []
         vue_blocks.blocks = []
